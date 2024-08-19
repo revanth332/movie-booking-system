@@ -4,7 +4,21 @@ import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from 'bcryptjs';
 
 class User{
-    static async create(userData){
+    static async findUser(userId){
+        try{
+            const pool = await poolPromise;
+            const sql = `select user_id from user where user_id = ?`;
+            const [rows] = await pool.query(sql,[userId]);
+            if(rows.length > 0){
+                this.registerUser.send({status:StatusCodes.OK,msg:"user found"});
+            }
+            else return {status:StatusCodes.NOT_FOUND,msg:"user not found"};
+        }
+        catch(err){
+            return {status:StatusCodes.INTERNAL_SERVER_ERROR,msg:"Internal server error"};
+        }
+    }
+    static async registerUser(userData){
         const {firstName,lastName,dob,phone,gender,email,password} = userData;
         try{
             const pool = await poolPromise;
@@ -12,22 +26,6 @@ class User{
             const [{affectedRows}] = await pool.query(sql,[lastName,dob,phone,gender,email,firstName,password]);
             if(affectedRows > 0){
                 return {status:StatusCodes.OK,msg:"Successfully added User"};
-            }
-        }
-        catch(err){
-            console.log(err)
-        }
-    }
-
-    static async createTheater(userData){
-        // console.log("register")
-        const {theaterName,theaterAddress,rating,email,phone,password,capacity,state,city,address} = userData;
-        try{
-            const pool = await poolPromise;
-            const sql = `insert into theater values(UUID(),?,?,?,?,?,?,?,?,?,?)`;
-            const [{affectedRows}] = await pool.query(sql,[theaterName,theaterAddress,rating,email,phone,password,capacity,state,city,address]);
-            if(affectedRows > 0){
-                return {status:StatusCodes.OK,msg:"Successfully added Theater"};
             }
         }
         catch(err){
@@ -52,6 +50,78 @@ class User{
             throw err;
         }
     }
+    
+      static async getMovies() {
+        try {
+          const pool = await poolPromise;
+          const sql = `select * from movie`;
+          const [rows] = await pool.query(sql);
+          if (rows.length > 0) {
+            return { status: StatusCodes.OK, data: rows };
+          }
+        } catch (err) {
+          throw err;
+        }
+      }
+    
+      static async bookMovie(bookingData){
+        const {userId,seatId} = bookingData;
+        try{
+            const pool = await poolPromise;
+            const sql = `insert into booking values(UUID(),?,?,1)`;
+            const [{affectedRows}] = await pool.query(sql,[userId,seatId]);
+            if(affectedRows > 0){
+                return {status:StatusCodes.OK,msg:"Successfully booked movie"};
+            }
+        }
+        catch(err){
+           throw err;
+        }
+    }
+    
+    static async cancelBooking(bookingData){
+        const {bookingId} = bookingData;
+        try{
+        const pool = await poolPromise;
+        const sql = `update booking set status_id = 2 where booking_id = ?`;
+        const [{affectedRows}] = await pool.query(sql,[bookingId]);
+        if(affectedRows > 0){
+        return {status:StatusCodes.OK,msg:"Successfully cancelled movie"};
+        }
+        }
+        catch(err){
+            console.log(err)
+        // throw err;
+        }
+        }
+    
+        static async getShowTimes(theaterMovieId){
+            try{
+                const pool = await poolPromise;
+                const sql = `select time from theater_movie_time where theater_movie_id = ?`;
+                const [rows] = await pool.query(sql,theaterMovieId);
+                if(rows.length > 0){
+                    return {status:StatusCodes.OK,data:rows};
+                }
+            }
+            catch(err){
+               throw err;
+            }
+        }
+    
+        static async getTheaters(movieId){
+            try{
+                const pool = await poolPromise;
+                const sql = `select tm.theater_movie_id,t.theater_name,t.city,t.address,tm.price from theater_movie tm join theater t on t.theater_id = tm.theater_id where tm.movie_id = ?`;
+                const [rows] = await pool.query(sql,[movieId]);
+                if(rows.length > 0){
+                    return {status:StatusCodes.OK,data:rows};
+                }
+            }
+            catch(err){
+               throw err;
+            }
+        }
 }
 
 export default User;

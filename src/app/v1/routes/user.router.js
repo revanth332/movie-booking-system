@@ -1,13 +1,15 @@
 import express from 'express'
-import { registerUser,loginUser,registerTheater } from '../controllers/user.controller.js';
-
 const router = express.Router();
+import {bookMovie,cancelBooking,getMovies,getShowTimes,getTheaters } from '../controllers/user.controller.js';
 
-router.route('/registerUser').post(registerUser);
+router.route('/getMovies').get(getMovies)
 
-router.route('/registerTheater').post(registerTheater);
+router.route("/bookMovie").post(bookMovie);
 
-router.route('/login').post(loginUser);
+router.route("/cancelBooking").post(cancelBooking);
 
+router.route("/getShowTimes").get(getShowTimes);
+
+router.route("/getTheaters").get(getTheaters);
 
 export default router;
