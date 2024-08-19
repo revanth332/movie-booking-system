@@ -34,13 +34,13 @@ export async function bookMovie(req,res){
     }
 }
 
-export async function cancelMovie(req,res){
-    const movieData = req.body;
+export async function cancelBooking(req,res){
+    const bookingData = req.body;
     try{
-        const response = await Movie.addMovie(movieData);
-        if(response.status === 200) res.status(response.status).send("Movie added succesfully")
+        const response = await Movie.cancelBooking(bookingData);
+        if(response.status === 200) res.status(response.status).send("Movie cancelled succesfully")
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to add the movie",err})
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to cancel the movie",err})
     }
 }

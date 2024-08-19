@@ -72,21 +72,38 @@ class Movie {
     }
   }
 
-  static async bookMovie(movieData) {
-    // const {userId,seatId,}
-    try {
-      const pool = await poolPromise;
-      const sql = `insert into booking values(UUID(),?,?,?)`;
-      const [rows] = await pool.query(sql, []);
-      if (rows.length > 0) {
-        return { status: StatusCodes.OK, data: rows };
-      }
-    } catch (err) {
-      throw err;
+  static async bookMovie(bookingData){
+    const {userId,seatId} = bookingData;
+    try{
+        const pool = await poolPromise;
+        const sql = `insert into booking values(UUID(),?,?,1)`;
+        const [{affectedRows}] = await pool.query(sql,[userId,seatId]);
+        if(affectedRows > 0){
+            return {status:StatusCodes.OK,msg:"Successfully booked movie"};
+        }
     }
-  }
+    catch(err){
+       throw err;
+    }
+}
 
-  static async cancelMovie(movieData) {}
+static async cancelBooking(bookingData){
+    const {bookingId} = bookingData;
+    try{
+    const pool = await poolPromise;
+    const sql = `update booking set status_id = 2 where booking_id = ?`;
+    const [{affectedRows}] = await pool.query(sql,[bookingId]);
+    if(affectedRows > 0){
+    return {status:StatusCodes.OK,msg:"Successfully cancelled movie"};
+    }
+    }
+    catch(err){
+        console.log(err)
+    // throw err;
+    }
+    }
+
+    
 }
 
 export default Movie;
