@@ -103,7 +103,19 @@ static async cancelBooking(bookingData){
     }
     }
 
-    
+    static async getShowTimes(theaterMovieId){
+        try{
+            const pool = await poolPromise;
+            const sql = `select time from theater_movie_time where theater_movie_id = ?`;
+            const [rows] = await pool.query(sql,theaterMovieId);
+            if(rows.length > 0){
+                return {status:StatusCodes.OK,data:rows};
+            }
+        }
+        catch(err){
+           throw err;
+        }
+    }
 }
 
 export default Movie;

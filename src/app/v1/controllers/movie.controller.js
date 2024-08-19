@@ -44,3 +44,14 @@ export async function cancelBooking(req,res){
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to cancel the movie",err})
     }
 }
+
+export async function getShowTimes(req,res){
+    const theaterMovieId = req.query.theaterMovieId;
+    try{
+        const response = await Movie.getShowTimes(theaterMovieId);
+        if(response.status === 200) res.status(response.status).send({data:response.data})
+    }
+    catch(err){
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the show timings",err})
+    }
+}

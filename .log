@@ -221,3 +221,14 @@
 {"body":{"seatId":"31334d5f-5e15-11ef-8262-8cec4bc9914d","userId":"f22d9261-5e15-11ef-8262-8cec4bc9914d"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/bookMovie","query":{},"responseTime":26,"status":"success","timestamp":"2024-08-19T10:48:18.829Z","userAgent":"PostmanRuntime/7.41.1"}
 {"body":{"bookingId":"8bb8624f-5e18-11ef-8262-8cec4bc9914d"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/cancelBooking","query":{},"responseTime":24,"status":"success","timestamp":"2024-08-19T10:48:49.625Z","userAgent":"PostmanRuntime/7.41.1"}
 {"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:52:49.420Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:53:26.618Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:53:39.822Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:55:28.677Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:57:50.219Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:58:02.929Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:58:31.919Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:59:01.604Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:59:05.105Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:59:13.132Z"}
+{"body":{"theaterMovieId":"313009d7-5e15-11ef-8262-8cec4bc9914d"},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getShowTimes","query":{},"responseTime":31,"status":"failed","timestamp":"2024-08-19T11:00:25.669Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getShowTimes","query":{"theaterMovieId":"313009d7-5e15-11ef-8262-8cec4bc9914d"},"responseTime":3,"status":"failed","timestamp":"2024-08-19T11:01:28.473Z","userAgent":"PostmanRuntime/7.41.1"}
