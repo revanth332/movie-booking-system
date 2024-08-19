@@ -116,6 +116,20 @@ static async cancelBooking(bookingData){
            throw err;
         }
     }
+
+    static async getTheaters(movieId){
+        try{
+            const pool = await poolPromise;
+            const sql = `select tm.theater_movie_id,t.theater_name,t.city,t.address,tm.price from theater_movie tm join theater t on t.theater_id = tm.theater_id where tm.movie_id = ?`;
+            const [rows] = await pool.query(sql,[movieId]);
+            if(rows.length > 0){
+                return {status:StatusCodes.OK,data:rows};
+            }
+        }
+        catch(err){
+           throw err;
+        }
+    }
 }
 
 export default Movie;

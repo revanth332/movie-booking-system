@@ -16,7 +16,7 @@ export async function addMovie(req,res){
 export async function getMovies(req,res){
     try{
         const response = await Movie.getMovies();
-        if(response.status === 200) res.status(response.status).send(response.data);
+        if(response.status === 200) res.status(response.status).send({movies:response.data});
     }
     catch(err){
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to fetch the movies",err})
@@ -49,9 +49,20 @@ export async function getShowTimes(req,res){
     const theaterMovieId = req.query.theaterMovieId;
     try{
         const response = await Movie.getShowTimes(theaterMovieId);
-        if(response.status === 200) res.status(response.status).send({data:response.data})
+        if(response.status === 200) res.status(response.status).send({showTimes:response.data})
     }
     catch(err){
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the show timings",err})
+    }
+}
+
+export async function getTheaters(req,res){
+    const movieId = req.query.movieId;
+    try{
+        const response = await Movie.getTheaters(movieId);
+        if(response.status === 200) res.status(response.status).send({theaters:response.data})
+    }
+    catch(err){
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
     }
 }

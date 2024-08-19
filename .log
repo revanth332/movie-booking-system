@@ -232,3 +232,102 @@
 {"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T10:59:13.132Z"}
 {"body":{"theaterMovieId":"313009d7-5e15-11ef-8262-8cec4bc9914d"},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getShowTimes","query":{},"responseTime":31,"status":"failed","timestamp":"2024-08-19T11:00:25.669Z","userAgent":"PostmanRuntime/7.41.1"}
 {"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getShowTimes","query":{"theaterMovieId":"313009d7-5e15-11ef-8262-8cec4bc9914d"},"responseTime":3,"status":"failed","timestamp":"2024-08-19T11:01:28.473Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:02:17.120Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getShowTimes","query":{"theaterMovieId":"313009d7-5e15-11ef-8262-8cec4bc9914d"},"responseTime":13,"status":"success","timestamp":"2024-08-19T11:02:18.950Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:03:59.587Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:04:33.088Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:04:59.855Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getTheaters","query":{},"responseTime":6,"status":"failed","timestamp":"2024-08-19T11:05:24.717Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:17:42.455Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:18:07.974Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getTheaters","query":{"movieId":"312c3547-5e15-11ef-8262-8cec4bc9914d"},"responseTime":6,"status":"failed","timestamp":"2024-08-19T11:18:52.547Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:19:20.758Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getTheaters","query":{"movieId":"312c3547-5e15-11ef-8262-8cec4bc9914d"},"responseTime":7,"status":"success","timestamp":"2024-08-19T11:19:22.313Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T11:20:06.722Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:20:38.916Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:23:06.482Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:26:44.638Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:27:54.744Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:29:21.972Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":15,"status":"failed","timestamp":"2024-08-19T13:30:20.212Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:32:02.066Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":20,"status":"failed","timestamp":"2024-08-19T13:32:05.111Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:32:31.583Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":40,"status":"failed","timestamp":"2024-08-19T13:32:34.627Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:32:43.789Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":22,"status":"failed","timestamp":"2024-08-19T13:32:45.261Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:33:47.221Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:33:54.215Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":33,"status":"success","timestamp":"2024-08-19T13:33:57.888Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{"password":"Movie@32","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":19,"status":"success","timestamp":"2024-08-19T13:34:34.944Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:35:20.704Z"}
+{"body":{"password":"Movie@32","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":32,"status":"failed","timestamp":"2024-08-19T13:35:53.166Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":7,"status":"failed","timestamp":"2024-08-19T13:36:01.652Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:36:17.800Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":34,"status":"failed","timestamp":"2024-08-19T13:36:19.616Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:36:39.890Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":31,"status":"failed","timestamp":"2024-08-19T13:36:41.515Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:37:10.241Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":41,"status":"failed","timestamp":"2024-08-19T13:37:12.089Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:38:11.246Z"}
+{"body":{"password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":39,"status":"failed","timestamp":"2024-08-19T13:38:15.709Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:40:25.906Z"}
+{"body":{"dob":"2002-03-31","email":"hemanth@gmail.com","firstName":"Hemanth","gender":"Male","lastName":"Lanka","password":"Movie@321","phone":"9959965916"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/registerUser","query":{},"responseTime":47,"status":"success","timestamp":"2024-08-19T13:41:18.024Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{"password":"Movie@321","phone":"9959965917"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":9,"status":"failed","timestamp":"2024-08-19T13:43:39.194Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:43:45.923Z"}
+{"body":{"password":"Movie@321","phone":"9959965917"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":20,"status":"failed","timestamp":"2024-08-19T13:43:47.477Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{"dob":"2002-03-31","email":"ravan@gmail.com","firstName":"Ravan","gender":"Male","lastName":"Lanka","password":"Movie@321","phone":"9959965917"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/registerUser","query":{},"responseTime":37,"status":"success","timestamp":"2024-08-19T13:44:08.308Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{"password":"Movie@321","phone":"9959965917"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":10,"status":"success","timestamp":"2024-08-19T13:44:12.813Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:45:24.640Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:45:41.525Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:45:56.438Z"}
+{"body":{"password":"Movie@32","phone":"9959965917"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":31,"status":"failed","timestamp":"2024-08-19T13:46:05.090Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:46:39.251Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:48:52.090Z"}
+{"body":{"password":"Movie@321","phone":"9959965917"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":33,"status":"success","timestamp":"2024-08-19T13:49:01.792Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"inside test","timestamp":"2024-08-19T13:50:54.612Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/test","query":{},"responseTime":15,"status":"success","timestamp":"2024-08-19T13:50:54.621Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"inside test","timestamp":"2024-08-19T13:51:02.775Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/test","query":{},"responseTime":10,"status":"success","timestamp":"2024-08-19T13:51:02.783Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:52:35.173Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:52:38.140Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/v1/temp","query":{},"responseTime":6,"status":"failed","timestamp":"2024-08-19T13:52:43.936Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:52:50.915Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":6,"status":"success","timestamp":"2024-08-19T13:52:52.170Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:52:56.393Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":14,"status":"success","timestamp":"2024-08-19T13:52:57.501Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:53:05.323Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":5,"status":"success","timestamp":"2024-08-19T13:53:06.899Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":2,"status":"success","timestamp":"2024-08-19T13:53:18.908Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:53:28.106Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp/t","query":{},"responseTime":5,"status":"success","timestamp":"2024-08-19T13:53:33.265Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:54:27.823Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":5,"status":"failed","timestamp":"2024-08-19T13:54:32.464Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":8,"status":"success","timestamp":"2024-08-19T13:54:47.443Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:56:14.574Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:56:37.163Z"}
+{"body":{"password":"Movie@321","phone":"9959965917"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/login","query":{},"responseTime":42,"status":"success","timestamp":"2024-08-19T13:56:45.748Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":16,"status":"success","timestamp":"2024-08-19T13:57:10.754Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:58:33.924Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":85,"status":"success","timestamp":"2024-08-19T13:58:37.665Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:58:58.975Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":24,"status":"success","timestamp":"2024-08-19T13:59:03.414Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:59:30.789Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":18,"status":"success","timestamp":"2024-08-19T13:59:33.320Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":5,"status":"success","timestamp":"2024-08-19T13:59:34.430Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T13:59:55.508Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":11,"status":"success","timestamp":"2024-08-19T13:59:58.662Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T14:00:06.245Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/temp","query":{},"responseTime":11,"status":"success","timestamp":"2024-08-19T14:00:07.558Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T14:01:34.915Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getMovies","query":{},"responseTime":19,"status":"success","timestamp":"2024-08-19T14:01:56.076Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getMovies","query":{},"responseTime":4,"status":"success","timestamp":"2024-08-19T14:02:05.160Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T14:04:45.701Z"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getMovies","query":{},"responseTime":7,"status":"failed","timestamp":"2024-08-19T14:04:48.503Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getMovies","query":{},"responseTime":7,"status":"success","timestamp":"2024-08-19T14:04:52.543Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{},"ip":"::1","level":"info","message":"HTTP Request","method":"GET","path":"/getMovies","query":{},"responseTime":3,"status":"failed","timestamp":"2024-08-19T14:05:08.216Z","userAgent":"PostmanRuntime/7.41.1"}
+{"body":{"seatId":"31334d5f-5e15-11ef-8262-8cec4bc9914d","userId":"f22d9261-5e15-11ef-8262-8cec4bc9914d"},"ip":"::1","level":"info","message":"HTTP Request","method":"POST","path":"/bookMovie","query":{},"responseTime":10,"status":"failed","timestamp":"2024-08-19T14:05:47.584Z","userAgent":"PostmanRuntime/7.41.1"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T14:06:44.494Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T14:07:00.485Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T14:07:05.590Z"}
+{"level":"info","message":"Application Environment : development","timestamp":"2024-08-19T14:07:09.513Z"}

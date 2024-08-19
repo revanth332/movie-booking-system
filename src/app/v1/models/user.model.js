@@ -27,7 +27,6 @@ class User{
             const sql = `insert into theater values(UUID(),?,?,?,?,?,?,?,?,?,?)`;
             const [{affectedRows}] = await pool.query(sql,[theaterName,theaterAddress,rating,email,phone,password,capacity,state,city,address]);
             if(affectedRows > 0){
-                
                 return {status:StatusCodes.OK,msg:"Successfully added Theater"};
             }
         }
@@ -36,20 +35,21 @@ class User{
         }
     }
 
-    static async login(userData){
+    static async loginUser(userData){
         const {phone,password} = userData;
         try{
             const pool = await poolPromise;
-            const sql =  `select user_id from ? where phone = ? and password = ?`;
-            const [rows] = await pool.query(sql,[phone,password]);
+            const sql =  `select user_id,password from user where phone = ?`;
+            const [rows] = await pool.query(sql,[phone]);
             if(rows.length > 0){
-                await bcrypt.compare(password,rows[0].password)
-                return {status:StatusCodes.OK,msg:"Login Successful",userId:rows.user_id}
+                const matched = await bcrypt.compare(password,rows[0].password);
+                if(matched) return {status:StatusCodes.OK,msg:"Login Successful",userId:rows[0]["user_id"]}
+                else throw new Error("Invalid credentials")
             }
-            else throw new Error();
+            else throw new Error("No user found");
         }
         catch(err){
-            return err;
+            throw err;
         }
     }
 }

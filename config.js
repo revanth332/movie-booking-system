@@ -32,7 +32,8 @@ try {
         THEATER:process.env.THEATER,
         SEAT:process.env.SEAT,
         BOOKING:process.env.BOOKING,
-        USER:process.env.USER
+        USER:process.env.USER,
+        SECRET_KEY:process.env.SECRET_KEY
     };
 } catch (error) {
     console.log(error);
