@@ -21,11 +21,11 @@ class User{
 
     static async createTheater(userData){
         // console.log("register")
-        const {theaterName,theaterAddress,rating,email,phone,password,capacity} = userData;
+        const {theaterName,theaterAddress,rating,email,phone,password,capacity,state,city,address} = userData;
         try{
             const pool = await poolPromise;
-            const sql = `insert into theater values(UUID(),?,?,?,?,?,?,?)`;
-            const [{affectedRows}] = await pool.query(sql,[theaterName,theaterAddress,rating,email,phone,password,capacity]);
+            const sql = `insert into theater values(UUID(),?,?,?,?,?,?,?,?,?,?)`;
+            const [{affectedRows}] = await pool.query(sql,[theaterName,theaterAddress,rating,email,phone,password,capacity,state,city,address]);
             if(affectedRows > 0){
                 
                 return {status:StatusCodes.OK,msg:"Successfully added Theater"};
