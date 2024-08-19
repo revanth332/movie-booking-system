@@ -27,9 +27,10 @@ class User{
             if(affectedRows > 0){
                 return {status:StatusCodes.OK,msg:"Successfully added User"};
             }
+            throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
-            console.log(err)
+            throw err;
         }
     }
 
@@ -44,7 +45,7 @@ class User{
                 if(matched) return {status:StatusCodes.OK,msg:"Login Successful",userId:rows[0]["user_id"]}
                 else throw new Error("Invalid credentials")
             }
-            else throw new Error("No user found");
+            throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
             throw err;
@@ -59,6 +60,7 @@ class User{
           if (rows.length > 0) {
             return { status: StatusCodes.OK, data: rows };
           }
+          throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         } catch (err) {
           throw err;
         }
@@ -73,6 +75,7 @@ class User{
             if(affectedRows > 0){
                 return {status:StatusCodes.OK,msg:"Successfully booked movie"};
             }
+            throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
            throw err;
@@ -88,6 +91,7 @@ class User{
         if(affectedRows > 0){
         return {status:StatusCodes.OK,msg:"Successfully cancelled movie"};
         }
+        throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
             console.log(err)
@@ -103,6 +107,7 @@ class User{
                 if(rows.length > 0){
                     return {status:StatusCodes.OK,data:rows};
                 }
+                throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
             }
             catch(err){
                throw err;
@@ -117,6 +122,7 @@ class User{
                 if(rows.length > 0){
                     return {status:StatusCodes.OK,data:rows};
                 }
+                throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
             }
             catch(err){
                throw err;

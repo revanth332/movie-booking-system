@@ -19,7 +19,12 @@ export async function registerUser(req,res){
         return res.status(response.status).send(response.msg);
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to create the user",err})
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to create the user",err})
     }
 }
 
@@ -31,23 +36,30 @@ export async function loginUser(req,res){
         const token = sign({ userId:response.userId }, config.SECRET_KEY, {
             expiresIn: "1d"
         });
-        if(response.status === 200){
-            return res.status(response.status).send({msg:response.msg,token});
-        }
-        else throw Error();
+        return res.status(response.status).send({msg:response.msg,token});
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to log the user",err})
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to log the user",err})
     }
 }
 
 export async function getMovies(req,res){
     try{
         const response = await User.getMovies();
-        if(response.status === 200) res.status(response.status).send({movies:response.data});
+        res.status(response.status).send({movies:response.data});
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to fetch the movies",err})
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to fetch the movies",err})
     }
 }
 
@@ -55,10 +67,15 @@ export async function bookMovie(req,res){
     const bookingData = req.body;
     try{
         const response = await User.bookMovie(bookingData);
-        if(response.status === 200) res.status(response.status).send("Booked succesfully")
+        res.status(response.status).send("Booked succesfully")
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to book the movie",err})
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to book the movie",err})
     }
 }
 
@@ -66,10 +83,15 @@ export async function cancelBooking(req,res){
     const bookingData = req.body;
     try{
         const response = await User.cancelBooking(bookingData);
-        if(response.status === 200) res.status(response.status).send("Movie cancelled succesfully")
+        res.status(response.status).send("Movie cancelled succesfully")
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to cancel the movie",err})
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to cancel the movie",err})
     }
 }
 
@@ -77,10 +99,15 @@ export async function getShowTimes(req,res){
     const theaterMovieId = req.query.theaterMovieId;
     try{
         const response = await User.getShowTimes(theaterMovieId);
-        if(response.status === 200) res.status(response.status).send({showTimes:response.data})
+        res.status(response.status).send({showTimes:response.data})
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the show timings",err})
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the show timings",err})
     }
 }
 
@@ -88,9 +115,14 @@ export async function getTheaters(req,res){
     const movieId = req.query.movieId;
     try{
         const response = await User.getTheaters(movieId);
-        if(response.status === 200) res.status(response.status).send({theaters:response.data})
+        res.status(response.status).send({theaters:response.data})
     }
     catch(err){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
     }
 }

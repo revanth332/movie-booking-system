@@ -13,10 +13,10 @@ class Publisher{
             if(rows.length > 0){
                 this.registerUser.send({status:StatusCodes.OK,msg:"publisher found"});
             }
-            else return {status:StatusCodes.NOT_FOUND,msg:"publisher not found"};
+            throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
-            return {status:StatusCodes.INTERNAL_SERVER_ERROR,msg:"Internal server error"};
+            throw err;
         }
     }
 
@@ -30,9 +30,10 @@ class Publisher{
             if(affectedRows > 0){
                 return {status:StatusCodes.OK,msg:"Successfully added Theater"};
             }
+            throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
-            console.log(err)
+            throw err;
         }
     }
 
@@ -47,7 +48,7 @@ class Publisher{
                 if(matched) return {status:StatusCodes.OK,msg:"Login Successful",theaterId:rows[0]["theater_id"]}
                 else throw new Error("Invalid credentials")
             }
-            else throw new Error("No user found");
+            throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
             throw err;
