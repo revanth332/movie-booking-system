@@ -10,12 +10,12 @@ class User{
             const sql = `select user_id from user where user_id = ?`;
             const [rows] = await pool.query(sql,[userId]);
             if(rows.length > 0){
-                this.registerUser.send({status:StatusCodes.OK,msg:"user found"});
+                return {status:StatusCodes.OK,msg:"user found"};
             }
             else return {status:StatusCodes.NOT_FOUND,msg:"user not found"};
         }
         catch(err){
-            return {status:StatusCodes.INTERNAL_SERVER_ERROR,msg:"Internal server error"};
+            throw err;
         }
     }
     static async registerUser(userData){
@@ -62,7 +62,7 @@ class User{
           }
           throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         } catch (err) {
-          throw err;
+            throw err;
         }
       }
     
@@ -94,8 +94,7 @@ class User{
         throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
         }
         catch(err){
-            console.log(err)
-        // throw err;
+            throw err;
         }
         }
     
@@ -121,6 +120,22 @@ class User{
                 const [rows] = await pool.query(sql,[movieId]);
                 if(rows.length > 0){
                     return {status:StatusCodes.OK,data:rows};
+                }
+                throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
+            }
+            catch(err){
+               throw err;
+            }
+        }
+
+        static async submitFeedback(feedbackData){
+            const {userId,movieId,rating} = feedbackData;
+            try{
+                const pool = await poolPromise;
+                const sql = `insert into feedback values(uuid(),?,?,?)`;
+                const [{affectedRows}] = await pool.query(sql,[movieId,userId,rating]);
+                if(affectedRows > 0){
+                    return {status:StatusCodes.OK,msg:"Feedback added successfully"};
                 }
                 throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
             }

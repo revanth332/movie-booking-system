@@ -21,12 +21,19 @@ const passportStrategy = new JwtStrategy({
 }, async (jwt_payload, next) => {
     console.log(jwt_payload)
     const {userId} = jwt_payload;
-    var response = await User.findUser(userId);
-    if(response.status !== 200){
-        response = await Publisher.findPublisher(userId);
-        if(response.status === 200) next(null,{userId,type:"publisher"})
+    try{
+        var response = await User.findUser(userId);
+        console.log(response.status)
+        if(response.status !== 200){
+            response = await Publisher.findPublisher(userId);
+            if(response.status === 200) next(null,{userId,type:"publisher"})
+        }
+        next(null, {userId,type:"user"})
     }
-    next(null, {userId,type:"user"})
+    catch(err){
+        console.log(err)
+        next(null,false);
+    }
 });
 
 //init passport strategy

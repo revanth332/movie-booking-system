@@ -126,3 +126,19 @@ export async function getTheaters(req,res){
         // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
     }
 }
+
+export async function submitFeedback(req,res){
+    const feedbackData = req.body;
+    try{
+        const response = await User.submitFeedback(feedbackData);
+        res.status(response.status).send(response.msg)
+    }
+    catch(err){
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
+    }
+}
