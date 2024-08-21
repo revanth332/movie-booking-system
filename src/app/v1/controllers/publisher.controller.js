@@ -59,7 +59,7 @@ export async function addMovie(req,res){
         if (err.status) {
             res.status(err.status).send(err.message);
         } else {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
         }
         // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to add the movie",err})
     }

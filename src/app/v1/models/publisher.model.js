@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import config from "../../../../config.js";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from 'bcryptjs';
+import {v4 as uuidv4} from "uuid";
 
 class Publisher{
 
@@ -104,7 +105,7 @@ class Publisher{
             }
           }
         } catch (err) {
-          throw err;
+          console.log(err);
         }
       }
 }

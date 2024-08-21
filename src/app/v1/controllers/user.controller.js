@@ -51,7 +51,7 @@ export async function loginUser(req,res){
 export async function getMovies(req,res){
     try{
         const response = await User.getMovies();
-        res.status(response.status).send({movies:response.data});
+        res.status(response.status).send(response.data);
     }
     catch(err){
         if (err.status) {
@@ -99,7 +99,7 @@ export async function getShowTimes(req,res){
     const theaterMovieId = req.query.theaterMovieId;
     try{
         const response = await User.getShowTimes(theaterMovieId);
-        res.status(response.status).send({showTimes:response.data})
+        res.status(response.status).send(response.data)
     }
     catch(err){
         if (err.status) {
@@ -115,7 +115,7 @@ export async function getTheaters(req,res){
     const movieId = req.query.movieId;
     try{
         const response = await User.getTheaters(movieId);
-        res.status(response.status).send({theaters:response.data})
+        res.status(response.status).send(response.data)
     }
     catch(err){
         if (err.status) {
@@ -132,6 +132,22 @@ export async function submitFeedback(req,res){
     try{
         const response = await User.submitFeedback(feedbackData);
         res.status(response.status).send(response.msg)
+    }
+    catch(err){
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
+    }
+}
+
+export async function getBookings(req,res){
+    const feedbackData = req.body;
+    try{
+        const response = await User.getBookings(feedbackData);
+        res.status(response.status).send({bookings:response.data})
     }
     catch(err){
         if (err.status) {

@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import config from "../../../../config.js";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from 'bcryptjs';
+import {v4 as uuidv4} from "uuid";
 
 class User{
     static async findUser(userId){
@@ -116,7 +117,24 @@ class User{
         static async getTheaters(movieId){
             try{
                 const pool = await poolPromise;
-                const sql = `select tm.theater_movie_id,t.theater_name,t.city,t.address,tm.price from theater_movie tm join theater t on t.theater_id = tm.theater_id where tm.movie_id = ?`;
+                const sql = `select tm.theater_movie_id,t.theater_name,m.movie_name,t.city,t.address,tm.price from theater_movie tm join theater t join movie m on t.theater_id = tm.theater_id and m.movie_id=tm.movie_id where tm.movie_id= ?`;
+                const [rows] = await pool.query(sql,[movieId]);
+                if(rows.length > 0){
+                    return {status:StatusCodes.OK,data:rows};
+                }
+                throw {status:StatusCodes.CONFLICT,msg:"Bad sql syntax"}
+            }
+            catch(err){
+               throw err;
+            }
+        }
+
+        static async getBookings(feedbackData){
+            const {userId,movieId,rating} = feedbackData;
+            try{
+                const pool = await poolPromise;
+                const sql = `select t.theater_name,m.movie_name,tm.price,tmt.time from booking b join seat s join theater_movie_time tmt join theater_movie tm join theater t join movie m
+                on b.seat_id = s.seat_id and s.theater_movie_time_id = tmt.theater_movie_time_id and tm.theater_movie_id = tmt.theater_movie_id and t.theater_id = tm.theater_id and tm.movie_id = m.movie_id;`;
                 const [rows] = await pool.query(sql,[movieId]);
                 if(rows.length > 0){
                     return {status:StatusCodes.OK,data:rows};
