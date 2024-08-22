@@ -44,6 +44,7 @@ class User {
 
   static async loginUser(userData) {
     const { phone, password } = userData;
+    console.log(phone)
     try {
       const pool = await poolPromise;
       const sql = `select user_id,password from user where phone = ?`;
@@ -171,6 +172,50 @@ class User {
       throw err;
     }
   }
+
+  static async getTrendingMovies() {
+    try {
+      const pool = await poolPromise;
+      const sql = `select * from movie`;
+      const [rows] = await pool.query(sql);
+      if (rows.length > 0) {
+        return { status: StatusCodes.OK, data: rows };
+      }
+      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async getTheaterTimeMovieId(theaterMovieId,time) {
+    try {
+      const pool = await poolPromise;
+      const sql = `select theater_movie_time_id from theater_movie_time where theater_movie_id = ? and time = ?`;
+      const [rows] = await pool.query(sql,[theaterMovieId,time]);
+      console.log(rows)
+      if (rows.length > 0) {
+        return { status: StatusCodes.OK, data: rows };
+      }
+      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  static async getSeats(theaterMovieId,time) {
+    try {
+      const pool = await poolPromise;
+      const sql = `select theater_movie_time_id from theater_movie_time where theater_movie_id = ? and time = ?`;
+      const [rows] = await pool.query(sql,[theaterMovieId,time]);
+      if (rows.length > 0) {
+        return { status: StatusCodes.OK, data: rows };
+      }
+      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+    } catch (err) {
+      throw err;
+    }
+  }
+
 }
 
 export default User;

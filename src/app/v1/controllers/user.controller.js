@@ -158,3 +158,38 @@ export async function getBookings(req,res){
         // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
     }
 }
+
+export async function getSeats(req,res){
+    const theaterMovieId = req.query.theaterMovieId;
+    const time = req.query.time;
+    try{
+        const response = await User.getSeats(theaterMovieId,time);
+        res.status(response.status).send(response.data)
+    }
+    catch(err){
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
+    }
+}
+
+export async function getTheaterTimeMovieId(req,res){
+    const theaterMovieId = req.query.theaterMovieId;
+    const time = req.query.time;
+    console.log(theaterMovieId,time)
+    try{
+        const response = await User.getTheaterTimeMovieId(theaterMovieId,time);
+        res.status(response.status).send(response.data)
+    }
+    catch(err){
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        } else {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+        }
+        // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
+    }
+}
