@@ -202,11 +202,11 @@ class User {
     }
   }
 
-  static async getSeats(theaterMovieId,time) {
+  static async getSeats(theaterMovieTimeId) {
     try {
       const pool = await poolPromise;
-      const sql = `select theater_movie_time_id from theater_movie_time where theater_movie_id = ? and time = ?`;
-      const [rows] = await pool.query(sql,[theaterMovieId,time]);
+      const sql = `select * from seat where theater_movie_time_id = ?`;
+      const [rows] = await pool.query(sql,[theaterMovieTimeId]);
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }

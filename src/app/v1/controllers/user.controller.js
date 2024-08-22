@@ -160,10 +160,9 @@ export async function getBookings(req,res){
 }
 
 export async function getSeats(req,res){
-    const theaterMovieId = req.query.theaterMovieId;
-    const time = req.query.time;
+    const theaterMovieTimeId = req.query.theaterMovieTimeId;
     try{
-        const response = await User.getSeats(theaterMovieId,time);
+        const response = await User.getSeats(theaterMovieTimeId);
         res.status(response.status).send(response.data)
     }
     catch(err){

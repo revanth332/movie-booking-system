@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router();
-import {bookMovie,cancelBooking,getBookings,getMovies,getShowTimes,getTheaters,submitFeedback,getTheaterTimeMovieId } from '../controllers/user.controller.js';
+import {bookMovie,cancelBooking,getBookings,getMovies,getShowTimes,getTheaters,submitFeedback,getTheaterTimeMovieId,getSeats } from '../controllers/user.controller.js';
 
 router.route('/getMovies').get(getMovies)
 
@@ -17,5 +17,7 @@ router.route("/getBookings").get(getBookings)
 router.route("/submitFeedback").post(submitFeedback);
 
 router.route("/getTheaterTimeMovieId").get(getTheaterTimeMovieId);
+
+router.route("/getSeats").get(getSeats);
 
 export default router;
