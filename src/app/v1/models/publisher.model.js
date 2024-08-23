@@ -6,18 +6,20 @@ import { v4 as uuidv4 } from "uuid";
 
 class Publisher {
   static async findPublisher(userId) {
+    console.log(userId);
     try {
       const pool = await poolPromise;
       const sql = `select theater_id from theater where theater_id = ?`;
       const [rows] = await pool.query(sql, [userId]);
       if (rows.length > 0) {
-        this.registerUser.send({
+        return {
           status: StatusCodes.OK,
           msg: "publisher found",
-        });
+        };
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
+      console.log(err);
       throw err;
     }
   }
@@ -59,9 +61,10 @@ class Publisher {
 
   static async loginPublisher(publisherData) {
     const { phone, password } = publisherData;
+    // console.log(publisherData)
     try {
       const pool = await poolPromise;
-      const sql = `select theater_id,password from theater where phone = ?`;
+      const sql = `select theater_id,password,theater_name from theater where phone = ?`;
       const [rows] = await pool.query(sql, [phone]);
       if (rows.length > 0) {
         const matched = await bcrypt.compare(password, rows[0].password);
@@ -70,11 +73,13 @@ class Publisher {
             status: StatusCodes.OK,
             msg: "Login Successful",
             theaterId: rows[0]["theater_id"],
+            theaterName: rows[0]["theater_name"],
           };
         else throw new Error("Invalid credentials");
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
+      console.log(err);
       throw err;
     }
   }
@@ -128,6 +133,36 @@ class Publisher {
       }
     } catch (err) {
       console.log(err);
+    }
+  }
+  // static async getPublishedMovies(theaterId) {
+  //   console.log(theaterId)
+  //   try {
+  //     const pool = await poolPromise;
+  //     const sql = `select m.movie_name,m.description from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
+  //     const [rows] = await pool.query(sql, [theaterId]);
+  //     if (rows.length > 0) {
+  //       return { status: StatusCodes.OK, data: rows };
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw err;
+  //   }
+  // }
+
+  static async getPublishedMoviess(theaterId) {
+    try {
+      const pool = await poolPromise;
+      const sql = `select m.movie_name,m.description from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
+      const [rows] = await pool.query(sql, [theaterId]);
+  
+      if (rows.length > 0) {
+        return { status: StatusCodes.OK, data: rows };
+      }
+      return { status: StatusCodes.NOT_FOUND, msg: "No published movies found for this theater" };
+    } catch (err) {
+      console.error("Error fetching published movies:", err);
+      throw { status: StatusCodes.INTERNAL_SERVER_ERROR, msg: "An error occurred" };
     }
   }
 }

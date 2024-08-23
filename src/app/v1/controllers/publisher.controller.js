@@ -11,10 +11,15 @@ export async function loginPublisher(req, res) {
   try {
     const response = await Publisher.loginPublisher(userData);
     console.log(response);
-    const token = sign({ theaterId: response.theaterId }, config.SECRET_KEY, {
+    const token = sign({ userId: response.theaterId }, config.SECRET_KEY, {
       expiresIn: "1d",
     });
-    return res.status(response.status).send({ msg: response.msg, token });
+    return res.status(response.status).send({
+      msg: response.msg,
+      token,
+      theaterName: response.theaterName,
+      theaterId: response.theaterId,
+    });
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
@@ -75,5 +80,32 @@ export async function registerMovie(req, res) {
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to add the movie",err})
+  }
+}
+
+// export async function getPublishedMovies(req, res) {
+//   const theaterId = req.query.theaterId;
+//   try {
+//     const response = await Publisher.getPublishedMovies(theaterId);
+//     console.log(response)
+//     return res.send("response")
+//   } catch (err) {
+//     // if (err.status) {
+//     //   res.status(err.status).send(err.message);
+//     // } else {
+//     //   res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+//     // }
+//     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
+//   }
+// }
+
+export async function getPublishedMovies(req, res) {
+  const theaterId = req.query.theaterId;
+  try {
+    const response = await Publisher.getPublishedMoviess(theaterId);
+    res.status(200).json(response);
+  } catch (err) {
+    console.error("Error fetching published movies:", err);
+    res.status(500).send("Failed to fetch movies"); // Use 500 for internal server errors
   }
 }

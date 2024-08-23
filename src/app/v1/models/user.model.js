@@ -147,15 +147,16 @@ class User {
   static async getBookings(userId) {
     try {
       const pool = await poolPromise;
-      const sql = `select t.theater_name,m.movie_name,tm.price,tmt.time from booking b join seat s join theater_movie_time tmt join theater_movie tm join theater t join movie m join user u
+      const sql = `select t.theater_name,m.movie_name,tm.price,tmt.time,b.booking_id,s.seat_nmber from booking b join seat s join theater_movie_time tmt join theater_movie tm join theater t join movie m join user u
                     on b.seat_id = s.seat_id and s.theater_movie_time_id = tmt.theater_movie_time_id and tm.theater_movie_id = tmt.theater_movie_id and t.theater_id = tm.theater_id and tm.movie_id = m.movie_id and 
-                    u.user_id = b.user_id where u.user_id=?`;
+                    u.user_id = b.user_id where u.user_id=? and b.status_id = 1`;
       const [rows] = await pool.query(sql, [userId]);
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
+      console.log(err)
       throw err;
     }
   }
