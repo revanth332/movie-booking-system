@@ -81,19 +81,40 @@ class User {
   }
 
   static async bookMovie(bookingData) {
-    const { userId, seats } = bookingData;
+    const { userId, seats, theaterTimeMovieId } = bookingData;
+    console.log("hello");
+    console.log(bookingData);
     try {
       const pool = await poolPromise;
+      const bookingId = uuidv4();
+      await pool.query(`insert into booking values (?,?,?,?,?)`, [
+        bookingId,
+        new Date(),
+        userId,
+        1,
+        theaterTimeMovieId,
+      ]);
       const paramList = [];
       seats.forEach((seatId) => {
-        paramList.push([uuidv4(), userId, seatId, 1]);
+        paramList.push([uuidv4(), bookingId, seatId]);
       });
-      const sql = `insert into booking values ?`;
-      const [{ affectedRows }] = await pool.query(sql, [paramList]);
-      if (affectedRows > 0) {
-        return { status: StatusCodes.OK, msg: "Successfully booked movie" };
-      }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      await pool.query("insert into booking_details values ?", [paramList]);
+      const response = await pool.query(
+        "update seat set status_id = 1 where seat_id in (?)",
+        [seats]
+      );
+      console.log(response);
+      // const pool = await poolPromise;
+      // const paramList = [];
+      // seats.forEach((seatId) => {
+      //   paramList.push([uuidv4(),new Date(), userId,1,]);
+      // });
+      // const sql = `insert into booking values ?`;
+      // const [{ affectedRows }] = await pool.query(sql, [paramList]);
+      // if (affectedRows > 0) {
+      //   return { status: StatusCodes.OK, msg: "Successfully booked movie" };
+      // }
+      // throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
       console.log(err);
       throw err;
@@ -147,16 +168,16 @@ class User {
   static async getBookings(userId) {
     try {
       const pool = await poolPromise;
-      const sql = `select t.theater_name,m.movie_name,tm.price,tmt.time,b.booking_id,s.seat_nmber from booking b join seat s join theater_movie_time tmt join theater_movie tm join theater t join movie m join user u
-                    on b.seat_id = s.seat_id and s.theater_movie_time_id = tmt.theater_movie_time_id and tm.theater_movie_id = tmt.theater_movie_id and t.theater_id = tm.theater_id and tm.movie_id = m.movie_id and 
-                    u.user_id = b.user_id where u.user_id=? and b.status_id = 1`;
+      const sql = `select b.booking_id,t.theater_name,m.movie_name,tmt.time,tm.price,b.booking_date,count(b.booking_id) as seats_count from booking b join booking_details bd join theater_movie_time tmt join theater_movie tm join theater t join movie m
+      on b.booking_id = bd.booking_id and b.theater_movie_time_id = tmt.theater_movie_time_id and tm.theater_movie_id = tmt.theater_movie_id
+      and t.theater_id = tm.theater_id and m.movie_id = tm.movie_id where b.status_id = 1 and user_id = ? group by b.booking_id;`;
       const [rows] = await pool.query(sql, [userId]);
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw err;
     }
   }
@@ -219,6 +240,7 @@ class User {
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
+      console.log(err);
       throw err;
     }
   }

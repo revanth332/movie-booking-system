@@ -70,6 +70,7 @@ export async function getMovies(req, res) {
 
 export async function bookMovie(req, res) {
   const bookingData = req.body;
+  console.log()
   try {
     const response = await User.bookMovie(bookingData);
     res.status(response.status).send("Booked succesfully");

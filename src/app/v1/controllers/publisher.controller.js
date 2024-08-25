@@ -57,12 +57,14 @@ export async function addMovie(req, res) {
   const movieData = req.body;
   try {
     const response = await Publisher.addMovie(movieData);
-    res.status(response.status).send("Movie added succesfully");
+    console.log("jk");
+    return res.status(200).send(response.msg);
   } catch (err) {
+    console.log(err + "kkkkkkkkkkkk");
     if (err.status) {
-      res.status(err.status).send(err.message);
+      return res.status(err.status).send(err.message);
     } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to add the movie",err})
   }

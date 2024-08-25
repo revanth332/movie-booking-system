@@ -107,30 +107,23 @@ class Publisher {
   }
 
   static async addMovie(movieData) {
-    const { movieId, theaterId, price, date, timings } = movieData;
+    const { movieId, theaterId, price, date, time } = movieData;
     try {
       const pool = await poolPromise;
-      const sql = `insert into theater_movie values(UUID(),?,?,?,?)`;
-      const [{ affectedRows }] = await pool.query(sql, [
-        theaterId,
-        movieId,
-        price,
-        date,
-      ]);
-      if (affectedRows > 0) {
-        const sql4 = `select theater_movie_id from theater_movie where theater_id = ? and movie_id = ? and date = ?`;
-        const [rows] = await pool.query(sql4, [theaterId, movieId, date]);
-        const theaterMovieId = rows[0]["theater_movie_id"];
-        var paramList = [];
-        timings.forEach(function (time) {
-          paramList.push([uuidv4(), theaterMovieId, time]);
-        });
-        const sql5 = `insert into theater_movie_time values ?`;
-        const [{ affectedRows }] = await pool.query(sql5, [paramList]);
-        if (affectedRows > 0) {
-          return { status: StatusCodes.OK, msg: "Successfully added movie" };
-        }
-      }
+      const theaterMovieId = uuidv4();
+      // const sql = "insert into theater_movie values(?,?,?,?,?)";
+      // await pool.query(sql, [theaterMovieId, theaterId, movieId, price, date]);
+      const sql = "select * from theater";
+      // await pool.query(sql);
+      // const paramList = [];
+      // time.forEach(function (time) {
+      //   paramList.push([uuidv4(), theaterMovieId, time]);
+      // });
+      // console.log(paramList);
+      // const sql5 = `insert into theater_movie_time values ?`;
+      // const reponse = await pool.query(sql5, [paramList]);
+      // console.log(res, reponse);
+      return { status: StatusCodes.OK, msg: "Successfully added movie" };
     } catch (err) {
       console.log(err);
     }
@@ -155,14 +148,20 @@ class Publisher {
       const pool = await poolPromise;
       const sql = `select m.movie_name,m.description from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
       const [rows] = await pool.query(sql, [theaterId]);
-  
+
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      return { status: StatusCodes.NOT_FOUND, msg: "No published movies found for this theater" };
+      return {
+        status: StatusCodes.NOT_FOUND,
+        msg: "No published movies found for this theater",
+      };
     } catch (err) {
       console.error("Error fetching published movies:", err);
-      throw { status: StatusCodes.INTERNAL_SERVER_ERROR, msg: "An error occurred" };
+      throw {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        msg: "An error occurred",
+      };
     }
   }
 }
