@@ -30,7 +30,7 @@ const passportStrategy = new JwtStrategy(
         response = await Publisher.findPublisher(userId);
         if (response.status === 200) next(null, { userId, type: "publisher" });
       }
-      next(null, { userId, type: "user" });
+      else next(null, { userId, type: "user" });
     } catch (err) {
       console.log(err);
       next(null, false);

@@ -103,6 +103,7 @@ export async function registerMovie(req, res) {
 
 export async function getPublishedMovies(req, res) {
   const theaterId = req.query.theaterId;
+  console.log(theaterId)
   try {
     const response = await Publisher.getPublishedMoviess(theaterId);
     res.status(200).json(response);

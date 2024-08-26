@@ -111,18 +111,18 @@ class Publisher {
     try {
       const pool = await poolPromise;
       const theaterMovieId = uuidv4();
-      // const sql = "insert into theater_movie values(?,?,?,?,?)";
-      // await pool.query(sql, [theaterMovieId, theaterId, movieId, price, date]);
-      const sql = "select * from theater";
+      const sql = "insert into theater_movie values(?,?,?,?,?)";
+      await pool.query(sql, [theaterMovieId, theaterId, movieId, price, date]);
+      // const sql = "select * from theater";
       // await pool.query(sql);
-      // const paramList = [];
-      // time.forEach(function (time) {
-      //   paramList.push([uuidv4(), theaterMovieId, time]);
-      // });
-      // console.log(paramList);
-      // const sql5 = `insert into theater_movie_time values ?`;
-      // const reponse = await pool.query(sql5, [paramList]);
-      // console.log(res, reponse);
+      const paramList = [];
+      time.forEach(function (time) {
+        paramList.push([uuidv4(), theaterMovieId, time]);
+      });
+      console.log(paramList);
+      const sql5 = `insert into theater_movie_time values ?`;
+      const reponse = await pool.query(sql5, [paramList]);
+      console.log(reponse);
       return { status: StatusCodes.OK, msg: "Successfully added movie" };
     } catch (err) {
       console.log(err);
@@ -148,7 +148,7 @@ class Publisher {
       const pool = await poolPromise;
       const sql = `select m.movie_name,m.description from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
       const [rows] = await pool.query(sql, [theaterId]);
-
+      console.log("rows")
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
