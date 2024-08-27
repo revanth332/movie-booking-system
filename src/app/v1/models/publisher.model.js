@@ -28,31 +28,28 @@ class Publisher {
     // console.log("register")
     const {
       theaterName,
-      theaterAddress,
       email,
       phone,
-      password,
       capacity,
-      state,
       city,
+      theaterAddress,
+      password
     } = theaterData;
     try {
       const pool = await poolPromise;
-      const sql = `insert into theater values(UUID(),?,?,?,?,?,?,?,?)`;
+      const theaterId = uuidv4();
+      const sql = `insert into theater values(?,?,?,?,?,?,?,?)`;
       const [{ affectedRows }] = await pool.query(sql, [
+        theaterId,
         theaterName,
-        theaterAddress,
         email,
         phone,
         capacity,
-        state,
         city,
-        password,
+        theaterAddress,
+        password
       ]);
-      if (affectedRows > 0) {
-        return { status: StatusCodes.OK, msg: "Successfully added Theater" };
-      }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      return { status: StatusCodes.OK, msg: "Successfully added Theater",data:{theaterId,theaterName}};
     } catch (err) {
       console.log(err);
       throw err;
@@ -61,7 +58,6 @@ class Publisher {
 
   static async loginPublisher(publisherData) {
     const { phone, password } = publisherData;
-    // console.log(publisherData)
     try {
       const pool = await poolPromise;
       const sql = `select theater_id,password,theater_name from theater where phone = ?`;
@@ -113,8 +109,6 @@ class Publisher {
       const theaterMovieId = uuidv4();
       const sql = "insert into theater_movie values(?,?,?,?,?)";
       await pool.query(sql, [theaterMovieId, theaterId, movieId, price, date]);
-      // const sql = "select * from theater";
-      // await pool.query(sql);
       const paramList = [];
       time.forEach(function (time) {
         paramList.push([uuidv4(), theaterMovieId, time]);
@@ -128,25 +122,11 @@ class Publisher {
       console.log(err);
     }
   }
-  // static async getPublishedMovies(theaterId) {
-  //   console.log(theaterId)
-  //   try {
-  //     const pool = await poolPromise;
-  //     const sql = `select m.movie_name,m.description from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
-  //     const [rows] = await pool.query(sql, [theaterId]);
-  //     if (rows.length > 0) {
-  //       return { status: StatusCodes.OK, data: rows };
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //     throw err;
-  //   }
-  // }
 
-  static async getPublishedMoviess(theaterId) {
+  static async getPublishedMovies(theaterId) {
     try {
       const pool = await poolPromise;
-      const sql = `select m.movie_name,m.description from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
+      const sql = `select m.movie_name,m.description,tm.price,tm.date from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
       const [rows] = await pool.query(sql, [theaterId]);
       console.log("rows")
       if (rows.length > 0) {

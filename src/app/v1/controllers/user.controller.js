@@ -43,6 +43,7 @@ export async function loginUser(req, res) {
         token,
         userId: response.userId,
         userName: response.userName,
+        role:"user"
       });
   } catch (err) {
     if (err.status) {

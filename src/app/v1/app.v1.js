@@ -22,7 +22,6 @@ const passportStrategy = new JwtStrategy(
     secretOrKey: config.SECRET_KEY, // secret key
   },
   async (jwt_payload, next) => {
-    console.log(jwt_payload);
     const { userId } = jwt_payload;
     try {
       var response = await User.findUser(userId);
