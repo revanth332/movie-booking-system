@@ -126,7 +126,8 @@ class Publisher {
   static async getPublishedMovies(theaterId) {
     try {
       const pool = await poolPromise;
-      const sql = `select m.movie_name,m.description,tm.price,tm.date from movie m join theater_movie tm on tm.movie_id = m.movie_id where theater_id = ?`;
+      const sql = `select tmt.theater_movie_time_id,m.movie_name,m.description,tm.price,tm.date,tmt.time from movie m join theater_movie tm join theater_movie_time tmt
+      on tm.movie_id = m.movie_id and tmt.theater_movie_id = tm.theater_movie_id where tm.theater_id = ?`;
       const [rows] = await pool.query(sql, [theaterId]);
       console.log("rows")
       if (rows.length > 0) {
@@ -138,6 +139,28 @@ class Publisher {
       };
     } catch (err) {
       console.error("Error fetching published movies:", err);
+      throw {
+        status: StatusCodes.INTERNAL_SERVER_ERROR,
+        msg: "An error occurred",
+      };
+    }
+  }
+
+  static async cancelPublishedMovie(theaterMovieTimeId,date) {
+    try {
+      const pool = await poolPromise;
+      const [rows] = pool.query(`select theater_movie_id from theater_movie_time where theater_movie_time_id = ?`,[theaterMovieTimeId]);
+      const theaterMovieId = rows[0]["theater_movie_id"];
+      await pool.query(`delete from theater_movie_time where theater_movie_time_id = ?`, [theaterMovieTimeId]);
+      const sql = `select count(theater_movie_id) as count from theater_movie_time tmt join theater_movie tm on tmt.theater_movie_id = tm.theater_movie_id where tm.date = ? and tm.theater_movie_id = ?`;
+      const [rows2] = pool.query(sql,[date,theaterMovieId]);
+      const count = rows2[0]["count"];
+      if(count <= 0){
+        await pool.query(`delete from theater_movie where theater_movie_id = ?`,[theaterMovieId]);
+      }
+      return { status: StatusCodes.OK, msg:"Show deleted successfully" };
+    } catch (err) {
+      console.error("Error deleting published movies:", err);
       throw {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
         msg: "An error occurred",

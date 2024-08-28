@@ -4,7 +4,7 @@ import { loginPublisher,registerTheater } from '../controllers/publisher.control
 
 const router = express.Router();
 
-router.route('/registerUser').post(registerUser);
+// router.route('/registerUser').post(registerUser);
 
 router.route('/registerTheater').post(registerTheater);
 

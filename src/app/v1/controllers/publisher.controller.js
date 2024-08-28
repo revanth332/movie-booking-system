@@ -49,7 +49,7 @@ export async function registerTheater(req, res) {
       expiresIn: "1d",
     });
 
-    return res.status(response.status).send({...response.data,token});
+    return res.status(response.status).send({theaterId:response.data.theaterId,theaterName:response.data.theaterName,token,role:"publisher"});
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
@@ -114,6 +114,21 @@ export async function getPublishedMovies(req, res) {
     res.status(200).json(response.data);
   } catch (err) {
     console.error("Error fetching published movies:", err);
-    res.status(500).send("Failed to fetch movies"); // Use 500 for internal server errors
+    res.status(500).send("Failed to fetch movies"); 
+  }
+}
+
+
+export async function cancelPublishedMovie(req, res) {
+  const theaterMovieTimeId = req.query.theaterMovieTimeId;
+  const date = req.query.date;
+  console.log("theaterMovieTimeId")
+  try {
+    console.log("kl")
+    const response = await Publisher.cancelPublishedMovie(theaterMovieTimeId,date);
+    res.status(200).json(response.msg);
+  } catch (err) {
+    console.error("Error fetching published movies:", err);
+    res.status(500).send("Failed to fetch movies");
   }
 }

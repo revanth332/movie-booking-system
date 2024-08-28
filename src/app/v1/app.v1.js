@@ -13,7 +13,6 @@ import publisherRouter from "../v1/routes/publisher.router.js";
 import authRouter from "../v1/routes/auth.router.js";
 import Publisher from "./models/publisher.model.js";
 import User from "./models/user.model.js";
-import { getMovies } from "./controllers/user.controller.js";
 
 //defining the JWT strategy
 const passportStrategy = new JwtStrategy(

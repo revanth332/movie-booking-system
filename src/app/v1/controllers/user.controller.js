@@ -17,7 +17,11 @@ export async function registerUser(req, res) {
       password: hashedPassword,
     });
 
-    return res.status(response.status).send(response.msg);
+    const token = sign({ userId: response.data.theaterId }, config.SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    return res.status(response.status).send({userId:response.data.theaterId,userName:response.data.userName,token,role:"user"});
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
@@ -43,13 +47,14 @@ export async function loginUser(req, res) {
         token,
         userId: response.userId,
         userName: response.userName,
-        role:"user"
+        role:response.role
       });
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
     } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
+      console.log(err)
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred: "+err);
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to log the user",err})
   }

@@ -22,8 +22,10 @@ class User {
       userData;
     try {
       const pool = await poolPromise;
-      const sql = `insert into user values(UUID(),?,?,?,?,?,?,?)`;
-      const [{ affectedRows }] = await pool.query(sql, [
+      const userId = uuidv4();
+      const sql = `insert into user values(?,?,?,?,?,?,?,?)`;
+      await pool.query(sql, [
+        userId,
         firstName,
         lastName,
         dob,
@@ -32,10 +34,8 @@ class User {
         email,
         password,
       ]);
-      if (affectedRows > 0) {
-        return { status: StatusCodes.OK, msg: "Successfully added User" };
-      }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+
+      return { status: StatusCodes.OK, msg: "Successfully added User",data:{userId,userName:firstName} };
     } catch (err) {
       console.log(err);
       throw err;
@@ -57,11 +57,28 @@ class User {
             msg: "Login Successful",
             userId: rows[0]["user_id"],
             userName: rows[0]["first_name"],
+            role:"user"
           };
-        else throw new Error("Invalid credentials");
+        else{
+          const sql = `select theater_id,password,theater_name from theater where phone = ?`;
+        const [rows] = await pool.query(sql, [phone]);
+        if (rows.length > 0) {
+          const matched = await bcrypt.compare(password, rows[0].password);
+          if (matched)
+            return {
+              status: StatusCodes.OK,
+              msg: "Login Successful",
+              userId: rows[0]["theater_id"],
+              userName: rows[0]["theater_name"],
+              role:"publisher"
+            };
+          else throw new Error("Invalid credentials");
+        }
+        }
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
+      console.log(err)
       throw err;
     }
   }
@@ -104,17 +121,6 @@ class User {
         [seats]
       );
       console.log(response);
-      // const pool = await poolPromise;
-      // const paramList = [];
-      // seats.forEach((seatId) => {
-      //   paramList.push([uuidv4(),new Date(), userId,1,]);
-      // });
-      // const sql = `insert into booking values ?`;
-      // const [{ affectedRows }] = await pool.query(sql, [paramList]);
-      // if (affectedRows > 0) {
-      //   return { status: StatusCodes.OK, msg: "Successfully booked movie" };
-      // }
-      // throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
       console.log(err);
       throw err;
@@ -153,7 +159,7 @@ class User {
   static async getTheaters(movieId) {
     try {
       const pool = await poolPromise;
-      const sql = `select tm.theater_movie_id,t.theater_name,m.movie_name,t.city,t.theater_address,tm.price from theater_movie tm join theater t join movie m on t.theater_id = tm.theater_id and m.movie_id=tm.movie_id where tm.movie_id= ?`;
+      const sql = `select tm.theater_movie_id,t.theater_name,m.movie_name,t.city,t.theater_address,tm.price,tm.date from theater_movie tm join theater t join movie m on t.theater_id = tm.theater_id and m.movie_id=tm.movie_id where tm.movie_id= ?`;
       const [rows] = await pool.query(sql, [movieId]);
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
