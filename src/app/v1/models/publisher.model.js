@@ -3,6 +3,7 @@ import config from "../../../../config.js";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 
 class Publisher {
   static async findPublisher(userId) {
@@ -102,10 +103,38 @@ class Publisher {
     }
   }
 
+  static formatDate(dateString) {
+    const [day, month, year] = dateString.split(' ');
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthIndex = months.indexOf(month);
+    return `${year}-${monthIndex + 1}-${day.padStart(2, '0')}`;
+  }
+  
+  static formatTime(minuteString) {
+    let minutes = minuteString.split(" ")[0]
+    console.log(minutes)
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2,'0')}`;
+  }
+
   static async addMovie(movieData) {
-    const { movieId, theaterId, price, date, time } = movieData;
+    const { imdbID, theaterId, price, date, time } = movieData;
     try {
       const pool = await poolPromise;
+      const res = await axios.get(`http://www.omdbapi.com/?i=${imdbID}&plot=full&apikey=658d4be7`);
+      console.log(res.data)
+      var {Title,Rated,Released,Runtime,Genre,Director,Plot,Poster,Actors,Language} = res.data;
+
+      if(Runtime === 'N/A') Runtime = "120 min"
+      Runtime = this.formatTime(Runtime);
+
+      if(Rated === 'N/A') Rated = 8;
+      Released = this.formatDate(Released)
+
+      const movieId = uuidv4();
+      const [{affectedRows}] = await pool.query(`insert into movie values(?,?,?,?,?,?,?,?,?,?,?)`,[movieId,Title,Plot,Runtime,Rated,Genre,Poster,Actors,Released,Language,Director]);
+      console.log(affectedRows)
       const theaterMovieId = uuidv4();
       const sql = "insert into theater_movie values(?,?,?,?,?)";
       await pool.query(sql, [theaterMovieId, theaterId, movieId, price, date]);
@@ -113,10 +142,11 @@ class Publisher {
       time.forEach(function (time) {
         paramList.push([uuidv4(), theaterMovieId, time]);
       });
-      console.log(paramList);
+      // console.log(paramList);
       const sql5 = `insert into theater_movie_time values ?`;
       const reponse = await pool.query(sql5, [paramList]);
-      console.log(reponse);
+      // console.log(this.formatDate(Released));
+      // console.log(this.formatTime(Runtime));
       return { status: StatusCodes.OK, msg: "Successfully added movie" };
     } catch (err) {
       console.log(err);

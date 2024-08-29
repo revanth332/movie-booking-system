@@ -36,13 +36,29 @@ const pswds = [
 
 import axios from 'axios'
 
+
+// const options = {
+//   method: 'GET',
+//   url: 'https://api.themoviedb.org/3/movie/changes?page=1',
+//   headers: {
+//     accept: 'application/json',
+//     Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlYWQ2MTRjYmMwZjg0NDNjMzljZTNkNmFkOTdjODY2NiIsIm5iZiI6MTcyNDkyODk2NS45NDQ4ODUsInN1YiI6IjY2ZDA1MWJhMDBiMDllMjc3YWQzMzQzZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.wp8cFDi1ADSmOvPcQMfv9r6jcQqgdBQJwSeXJ0CAQJ0'
+//   }
+// };
+
+// axios
+//   .request(options)
+//   .then(function (response) {
+//     console.log(response.data);
+//   })
+//   .catch(function (error) {
+//     console.error(error);
+//   });
+
+
 const options = {
   method: 'GET',
-  url: 'https://streaming-availability.p.rapidapi.com/shows/%7Btype%7D/%7Bid%7D',
-  headers: {
-    'x-rapidapi-key': '6ce8e94de9mshdb168d323d19a23p165866jsn4c8d2bbb0d9f',
-    'x-rapidapi-host': 'streaming-availability.p.rapidapi.com'
-  }
+  url: 'http://www.omdbapi.com/?s=hello&y=2024&type=movie&page=1&apikey=658d4be7',
 };
 
 try {
