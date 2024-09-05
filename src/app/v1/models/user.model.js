@@ -18,19 +18,17 @@ class User {
     }
   }
   static async registerUser(userData) {
-    const { firstName, lastName, dob, phone, gender, email, password } =
+    const { firstName, lastName, phone, email, password } =
       userData;
     try {
       const pool = await poolPromise;
       const userId = uuidv4();
-      const sql = `insert into user values(?,?,?,?,?,?,?,?)`;
+      const sql = `insert into user values(?,?,?,?,?,?)`;
       await pool.query(sql, [
         userId,
         firstName,
         lastName,
-        dob,
         phone,
-        gender,
         email,
         password,
       ]);
