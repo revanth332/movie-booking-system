@@ -250,6 +250,21 @@ class User {
       throw err;
     }
   }
+
+  static async getMoviesByGenre(genre) {
+    try {
+      const pool = await poolPromise;
+      const sql = `select * from movie where genre like '%${genre}%'`;
+      const [rows] = await pool.query(sql);
+      if (rows.length > 0) {
+        return { status: StatusCodes.OK, data: rows };
+      }
+      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  }
 }
 
 export default User;

@@ -121,9 +121,9 @@ class Publisher {
   static async addMovie(movieData) {
     const { imdbID, theaterId, price, date, time } = movieData;
     try {
+      var ddate = new Date(date);
       const pool = await poolPromise;
       const res = await axios.get(`http://www.omdbapi.com/?i=${imdbID}&plot=full&apikey=658d4be7`);
-      console.log(res.data)
       var {Title,Rated,Released,Runtime,Genre,Director,Plot,Poster,Actors,Language} = res.data;
 
       if(Runtime === 'N/A') Runtime = "120 min"
@@ -137,14 +137,14 @@ class Publisher {
       console.log(affectedRows)
       const theaterMovieId = uuidv4();
       const sql = "insert into theater_movie values(?,?,?,?,?)";
-      await pool.query(sql, [theaterMovieId, theaterId, movieId, price, date]);
+      await pool.query(sql, [theaterMovieId, theaterId, movieId, price, ddate]);
       const paramList = [];
       time.forEach(function (time) {
         paramList.push([uuidv4(), theaterMovieId, time]);
       });
       // console.log(paramList);
       const sql5 = `insert into theater_movie_time values ?`;
-      const reponse = await pool.query(sql5, [paramList]);
+      await pool.query(sql5, [paramList]);
       // console.log(this.formatDate(Released));
       // console.log(this.formatTime(Runtime));
       return { status: StatusCodes.OK, msg: "Successfully added movie" };
@@ -179,13 +179,15 @@ class Publisher {
   static async cancelPublishedMovie(theaterMovieTimeId,date) {
     try {
       const pool = await poolPromise;
-      const [rows] = pool.query(`select theater_movie_id from theater_movie_time where theater_movie_time_id = ?`,[theaterMovieTimeId]);
+      const [rows] = await pool.query(`select theater_movie_id from theater_movie_time where theater_movie_time_id = ?`,[theaterMovieTimeId]);
+      console.log(rows)
       const theaterMovieId = rows[0]["theater_movie_id"];
       await pool.query(`delete from theater_movie_time where theater_movie_time_id = ?`, [theaterMovieTimeId]);
-      const sql = `select count(theater_movie_id) as count from theater_movie_time tmt join theater_movie tm on tmt.theater_movie_id = tm.theater_movie_id where tm.date = ? and tm.theater_movie_id = ?`;
-      const [rows2] = pool.query(sql,[date,theaterMovieId]);
+      const sql = `select count(tm.theater_movie_id) as count from theater_movie_time tmt join theater_movie tm on tmt.theater_movie_id = tm.theater_movie_id where tm.date = ? and tm.theater_movie_id = ?`;
+      const [rows2] = await pool.query(sql,[date,theaterMovieId]);
       const count = rows2[0]["count"];
-      if(count <= 0){
+      console.log(count)
+      if(count <= 0){  
         await pool.query(`delete from theater_movie where theater_movie_id = ?`,[theaterMovieId]);
       }
       return { status: StatusCodes.OK, msg:"Show deleted successfully" };

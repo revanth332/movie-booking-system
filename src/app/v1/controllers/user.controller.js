@@ -196,3 +196,15 @@ export async function getTheaterTimeMovieId(req, res) {
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
   }
 }
+
+export async function getMoviesByGenre(req, res) {
+  const genre = req.query.genre;
+  console.log(genre)
+  try {
+    const response = await User.getMoviesByGenre(genre);
+    return res.status(200).json(response.data);
+  } catch (err) {
+    console.error("Error fetching movies:", err);
+    res.status(500).send("Failed to fetch movies");
+  }
+}
