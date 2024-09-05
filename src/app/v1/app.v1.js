@@ -60,6 +60,10 @@ app.use(
   publisherRouter
 );
 
+app.get("/",(req,res)=> {
+  res.send("hello")
+})
+
 app.get("/getTrendingMovies", async (req, res) => {
   try {
     const response = await User.getTrendingMovies();
