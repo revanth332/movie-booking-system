@@ -7,6 +7,7 @@ const DbConfig = {
   user: config.DATABASE_USER,
   password: config.DATABASE_PASSWORD,
   database: config.DATABASE_NAME,
+  port:config.DATABASE_PORT
 };
 
 const poolPromise = (async () => {
