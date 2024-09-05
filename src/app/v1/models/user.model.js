@@ -215,6 +215,7 @@ class User {
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
+      console.log(err);
       throw err;
     }
   }
