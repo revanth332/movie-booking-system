@@ -123,7 +123,7 @@ class Publisher {
     try {
       var ddate = new Date(date);
       const pool = await poolPromise;
-      const res = await axios.get(`http://www.omdbapi.com/?i=${imdbID}&plot=full&apikey=658d4be7`);
+      const res = await axios.get(`https://www.omdbapi.com/?i=${imdbID}&plot=full&apikey=658d4be7`);
       var {Title,Rated,Released,Runtime,Genre,Director,Plot,Poster,Actors,Language} = res.data;
 
       if(Runtime === 'N/A') Runtime = "120 min"
