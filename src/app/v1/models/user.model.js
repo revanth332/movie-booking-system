@@ -133,10 +133,15 @@ class User {
       const sql = `update booking set status_id = 2 where booking_id = ?`;
       const [{ affectedRows }] = await pool.query(sql, [bookingId]);
       if (affectedRows > 0) {
+        const [rows] = await pool.query(`select seat_id from booking_details where booking_id = ?`,[bookingId]);
+        const seatids = rows.map(seat => seat.seat_id);
+        console.log(seatids);
+        const res = await pool.query(`update seat set status_id = 3 where seat_id in (?)`,[seatids]);
         return { status: StatusCodes.OK, msg: "Successfully cancelled movie" };
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
+      console.log(err)
       throw err;
     }
   }
