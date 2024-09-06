@@ -10,10 +10,10 @@ let config; // Define config variable outside try-catch block
 
 try {
     let dotenvPath = path.resolve(__dirname, '.env');
-    // if (!env)
-    //     dotenvPath = path.resolve(__dirname, '.env'); // If environment is not 'development', use .env.<env>
-    // else
-    //     dotenvPath = path.resolve(__dirname, `.env.${env}`);
+    if (!env)
+        dotenvPath = path.resolve(__dirname, '.env'); 
+    else
+        dotenvPath = path.resolve(__dirname, `.env.${env}`);
 
     // Load environment variables from the specified .env file
     const result = dotenv.config({ path: dotenvPath });
