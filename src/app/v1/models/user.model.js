@@ -119,6 +119,7 @@ class User {
         [seats]
       );
       console.log(response);
+      return {status: StatusCodes.OK, msg: "Successfully booked movie"}
     } catch (err) {
       console.log(err);
       throw err;
