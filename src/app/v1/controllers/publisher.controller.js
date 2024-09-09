@@ -108,7 +108,6 @@ export async function registerMovie(req, res) {
 
 export async function getPublishedMovies(req, res) {
   const theaterId = req.query.theaterId;
-  console.log(theaterId)
   try {
     const response = await Publisher.getPublishedMovies(theaterId);
     res.status(200).json(response.data);
@@ -121,11 +120,12 @@ export async function getPublishedMovies(req, res) {
 
 export async function cancelPublishedMovie(req, res) {
   const theaterMovieTimeId = req.query.theaterMovieTimeId;
+  const theaterMovieId = req.query.theaterMovieId;
+  const movieId = req.query.movieId;
   const date = req.query.date;
   console.log("theaterMovieTimeId")
   try {
-    console.log("kl")
-    const response = await Publisher.cancelPublishedMovie(theaterMovieTimeId,date);
+    const response = await Publisher.cancelPublishedMovie(theaterMovieTimeId,date,theaterMovieId,movieId);
     res.status(200).json(response.msg);
   } catch (err) {
     console.error("Error fetching published movies:", err);

@@ -166,7 +166,11 @@ class User {
       const sql = `select tm.theater_movie_id,t.theater_name,m.movie_name,t.city,t.theater_address,tm.price,tm.date from theater_movie tm join theater t join movie m on t.theater_id = tm.theater_id and m.movie_id=tm.movie_id where tm.movie_id= ?`;
       const [rows] = await pool.query(sql, [movieId]);
       if (rows.length > 0) {
-        return { status: StatusCodes.OK, data: rows };
+        const data = rows.map(item => {
+          const cDate = item.date.setDate(item.date.getDate()+1);
+          return {...item,date:new Date(cDate)}
+        })
+        return { status: StatusCodes.OK, data };
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {

@@ -56,14 +56,17 @@ import axios from 'axios'
 //   });
 
 
-const options = {
-  method: 'GET',
-  url: 'http://www.omdbapi.com/?s=hello&y=2024&type=movie&page=1&apikey=658d4be7',
-};
+// const options = {
+//   method: 'GET',
+//   url: 'http://www.omdbapi.com/?s=hello&y=2024&type=movie&page=1&apikey=658d4be7',
+// };
 
-try {
-	const response = await axios.request(options);
-	console.log(response.data);
-} catch (error) {
-	console.error(error);
-}
+// try {
+// 	const response = await axios.request(options);
+// 	console.log(response.data);
+// } catch (error) {
+// 	console.error(error);
+// }
+
+const name = undefined;
+console.log(typeof name)

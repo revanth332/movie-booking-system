@@ -129,13 +129,19 @@ class Publisher {
       if(Runtime === 'N/A') Runtime = "120 min"
       Runtime = this.formatTime(Runtime);
 
+      if(Poster === 'N/A' || Poster === "") Poster="https://previews.123rf.com/images/macrovector/macrovector1501/macrovector150100418/35433359-cinema-movie-entertainment-poster-with-realistic-film-reel-vector-illustration.jpg"
+
       if(Rated === 'N/A') Rated = 8;
       Released = this.formatDate(Released)
 
-      const movieId = uuidv4();
-      const [{affectedRows}] = await pool.query(`insert into movie values(?,?,?,?,?,?,?,?,?,?,?)`,[movieId,Title,Plot,Runtime,Rated,Genre,Poster,Actors,Released,Language,Director]);
-      console.log(affectedRows)
-      const theaterMovieId = uuidv4();
+      const movieId = imdbID;
+      var theaterMovieId = uuidv4();
+      const [rows] = await pool.query(`select movie_id from movie where movie_id = ?`,[movieId]);
+      if(rows.length <= 0){
+        const [{affectedRows}] = await pool.query(`insert into movie values(?,?,?,?,?,?,?,?,?,?,?)`,[movieId,Title,Plot,Runtime,Rated,Genre,Poster,Actors,Released,Language,Director]);
+        console.log(affectedRows)
+      }
+      
       const sql = "insert into theater_movie values(?,?,?,?,?)";
       await pool.query(sql, [theaterMovieId, theaterId, movieId, price, ddate]);
       const paramList = [];
@@ -156,12 +162,16 @@ class Publisher {
   static async getPublishedMovies(theaterId) {
     try {
       const pool = await poolPromise;
-      const sql = `select tmt.theater_movie_time_id,m.movie_name,m.description,tm.price,tm.date,tmt.time from movie m join theater_movie tm join theater_movie_time tmt
+      const sql = `select tmt.theater_movie_time_id,m.movie_name,m.description,tm.price,tm.date,tmt.time,tm.theater_movie_id,m.movie_id from movie m join theater_movie tm join theater_movie_time tmt
       on tm.movie_id = m.movie_id and tmt.theater_movie_id = tm.theater_movie_id where tm.theater_id = ?`;
       const [rows] = await pool.query(sql, [theaterId]);
-      console.log("rows")
+      const data = rows.map(item => {
+        const cDate = item.date.setDate(item.date.getDate()+1);
+        return {...item,date:new Date(cDate)}
+      })
+      
       if (rows.length > 0) {
-        return { status: StatusCodes.OK, data: rows };
+        return { status: StatusCodes.OK, data };
       }
       return {
         status: StatusCodes.NOT_FOUND,
@@ -176,19 +186,27 @@ class Publisher {
     }
   }
 
-  static async cancelPublishedMovie(theaterMovieTimeId,date) {
+  static async cancelPublishedMovie(theaterMovieTimeId,date,theaterMovieId,movieId) {
     try {
       const pool = await poolPromise;
-      const [rows] = await pool.query(`select theater_movie_id from theater_movie_time where theater_movie_time_id = ?`,[theaterMovieTimeId]);
-      console.log(rows)
-      const theaterMovieId = rows[0]["theater_movie_id"];
+      // // const [rows] = await pool.query(`select theater_movie_id from theater_movie_time where theater_movie_time_id = ?`,[theaterMovieTimeId]);
+      // console.log("cancel "+theaterMovieTimeId)
+      // console.log(rows)
+      // console.log("cancel",theaterMovieTimeId,date)
+      // const theaterMovieId = rows[0]["theater_movie_id"];
       await pool.query(`delete from theater_movie_time where theater_movie_time_id = ?`, [theaterMovieTimeId]);
       const sql = `select count(tm.theater_movie_id) as count from theater_movie_time tmt join theater_movie tm on tmt.theater_movie_id = tm.theater_movie_id where tm.date = ? and tm.theater_movie_id = ?`;
-      const [rows2] = await pool.query(sql,[date,theaterMovieId]);
-      const count = rows2[0]["count"];
-      console.log(count)
-      if(count <= 0){  
-        await pool.query(`delete from theater_movie where theater_movie_id = ?`,[theaterMovieId]);
+      const [rows] = await pool.query(sql,[date,theaterMovieId]);
+      const count = rows[0]["count"];
+      console.log("cancel "+count)
+      if(count <= 0){
+        await pool.query(`delete from theater_movie where theater_movie_id = ? and date = ?`,[theaterMovieId,date]);
+        const [rows2] = await pool.query(`select count(movie_id) as count from theater_movie where movie_id = ?`,[movieId]);
+        const moviesCount = rows2[0]["count"];
+        console.log(moviesCount)
+        if(moviesCount <= 0){
+          await pool.query(`delete from movie where movie_id = ?`,[movieId]);
+        }
       }
       return { status: StatusCodes.OK, msg:"Show deleted successfully" };
     } catch (err) {
