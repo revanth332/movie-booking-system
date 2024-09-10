@@ -182,7 +182,7 @@ class User {
   static async getBookings(userId) {
     try {
       const pool = await poolPromise;
-      const sql = `select b.booking_id,t.theater_name,m.movie_name,tmt.time,tm.price,b.booking_date,count(b.booking_id) as seats_count from booking b join booking_details bd join theater_movie_time tmt join theater_movie tm join theater t join movie m
+      const sql = `select b.booking_id,t.theater_name,m.movie_name,tmt.time,tm.price,tm.date,count(b.booking_id) as seats_count from booking b join booking_details bd join theater_movie_time tmt join theater_movie tm join theater t join movie m
       on b.booking_id = bd.booking_id and b.theater_movie_time_id = tmt.theater_movie_time_id and tm.theater_movie_id = tmt.theater_movie_id
       and t.theater_id = tm.theater_id and m.movie_id = tm.movie_id where b.status_id = 1 and user_id = ? group by b.booking_id;`;
       const [rows] = await pool.query(sql, [userId]);

@@ -6,7 +6,6 @@ user_id varchar(36) primary key,
 first_name varchar(100),
 last_name varchar(100),
 phone varchar(10),
-gender varchar(6),
 email varchar(100),
 password varchar(500)
 );
@@ -115,15 +114,15 @@ select * from feedback;
 
 select count(tm.theater_movie_id) as count from theater_movie_time tmt join theater_movie tm on tmt.theater_movie_id = tm.theater_movie_id where tm.date = '2024-09-11' and tm.theater_movie_id = 'f1b6bbfe-eb64-4343-937a-0f41ae5c5791';
 
-delete from theater;
-delete from movie;
-delete from user;
-delete from theater_movie;
-delete from seat;
-delete from theater_movie_time;
-delete from booking;
-delete from booking_details;
-delete from feedback;
+-- delete from theater;
+-- delete from movie;
+-- delete from user;
+-- delete from theater_movie;
+-- delete from seat;
+-- delete from theater_movie_time;
+-- delete from booking;
+-- delete from booking_details;
+-- delete from feedback;
 
 -- drop table booking_details;
 -- drop table booking;
@@ -230,6 +229,8 @@ on t.theater_id = tm.theater_id and m.movie_id=tm.movie_id where tm.movie_id= "1
 select tmt.theater_movie_time_id,m.movie_name,m.description,tm.price,tm.date,tmt.time,tm.theater_movie_id,m.movie_id from movie m join theater_movie tm join theater_movie_time tmt
 on tm.movie_id = m.movie_id and tmt.theater_movie_id = tm.theater_movie_id where tm.theater_id = "2c8b4a76-d94d-4e2f-88ee-2c9b5e9b7f7b";
 
+select count(movie_id) as count from theater_movie where movie_id = "40509ec2-c3b2-4dc2-a46b-a906dd0ab2b0";
+
 -- delete from theater_movie_time where theater_movie_time_id = "4b68c166-0ff9-4303-a836-4ba7f322c4d2";
 -- select count(*) from seat;
 
@@ -245,3 +246,7 @@ where tm.date = ? and tm.theater_movie_id = ?;
 select * from movie where genre like '%Animation%';
 
 select tm.theater_movie_id,t.theater_name,m.movie_name,t.city,t.theater_address,tm.price,tm.date from theater_movie tm join theater t join movie m on t.theater_id = tm.theater_id and m.movie_id=tm.movie_id where tm.movie_id= "f771a76b-0dd6-45ed-a5cb-433e6d204e5f";
+
+select t.theater_name,m.movie_name,tm.date,tmt.time from booking b join theater_movie_time tmt join theater_movie tm join theater t join movie m
+on b.theater_movie_time_id = tmt.theater_movie_time_id and tmt.theater_movie_id = tm.theater_movie_id and tm.theater_id = t.theater_id and tm.movie_id = m.movie_id
+where b.booking_id='';

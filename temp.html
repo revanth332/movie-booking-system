@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movie Cancellation</title>
+</head>
+<body>
+  <div style="background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 5px; padding: 20px; margin: 20px auto; width: 80%; max-width: 500px;">
+    <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;color:red">Movie Cancellation</h2>
+    <p>We regret to inform you that your booking for the following movie has been canceled due to technical issues:</p>
+    <table>
+      <tr>
+        <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Movie Name</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Theater Name</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Date</th>
+        <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Time</th>
+      </tr>
+      <tr>
+        <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ movieName }}</td>
+        <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ theaterName }}</td>
+        <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ date }}</td>
+        <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">{{ time }}</td>
+      </tr>
+    </table>
+    <p>We apologize for any inconvenience this may cause. Please contact our customer support for assistance.</p>
+  </div>
+</body>
+</html>
