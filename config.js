@@ -10,20 +10,20 @@ let config; // Define config variable outside try-catch block
 
 try {
     let dotenvPath = path.resolve(__dirname, '.env');
-    if (!env)
-        dotenvPath = path.resolve(__dirname, '.env'); 
-    else
-        dotenvPath = path.resolve(__dirname, `.env.${env}`);
+    // if (!env)
+    //     dotenvPath = path.resolve(__dirname, '.env'); 
+    // else
+    //     dotenvPath = path.resolve(__dirname, `.env.${env}`);
 
     // Load environment variables from the specified .env file
     const result = dotenv.config({ path: dotenvPath });
-    // Check if loading .env file failed
+
     if (result.error) {
         throw result.error;
     }
-    // Export environment variables
+
     config = {
-        ENV: env,
+        ENV:env,
         DATABASE_HOST: process.env.DATABASE_HOST,
         DATABASE_USER: process.env.DATABASE_USER,
         DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
