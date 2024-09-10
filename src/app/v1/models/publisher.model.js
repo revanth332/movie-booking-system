@@ -4,6 +4,7 @@ import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
+import nodemailer from 'nodemailer'
 
 class Publisher {
   static async findPublisher(userId) {
@@ -265,6 +266,9 @@ class Publisher {
       // console.log(rows)
       // console.log("cancel",theaterMovieTimeId,date)
       // const theaterMovieId = rows[0]["theater_movie_id"];
+      const sql2 = `select u.email from user u join booking b on u.user_id = b.user_id where theater_movie_time_id = ? and b.status_id=1;`;
+      const [rows3] = await pool.query(sql2,[theaterMovieTimeId]);
+      const email = rows3[0].email;
       await pool.query(
         `delete from theater_movie_time where theater_movie_time_id = ?`,
         [theaterMovieTimeId]
@@ -288,6 +292,30 @@ class Publisher {
           await pool.query(`delete from movie where movie_id = ?`, [movieId]);
         }
       }
+
+      console.log(email)
+      const mailTransporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.APP_MAIL_USER,
+            pass:process.env.APP_MAIL_PASS
+        }
+    });
+
+      const mailDetails = {
+        from: process.env.APP_MAIL_USER,
+        to: email,
+        subject: "Movie Cancelled",
+        text: `<p>Movie Cancelled</p>`
+    };
+
+      mailTransporter.sendMail(mailDetails, function(err, data) {
+        if(err) {
+            console.log('Error Occurs');
+        } else {
+            console.log('Email sent successfully');
+        }
+    });
       return { status: StatusCodes.OK, msg: "Show deleted successfully" };
     } catch (err) {
       console.error("Error deleting published movies:", err);
