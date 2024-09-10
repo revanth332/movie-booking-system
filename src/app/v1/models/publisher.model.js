@@ -34,7 +34,7 @@ class Publisher {
       capacity,
       city,
       theaterAddress,
-      password
+      password,
     } = theaterData;
     try {
       const pool = await poolPromise;
@@ -48,9 +48,13 @@ class Publisher {
         capacity,
         city,
         theaterAddress,
-        password
+        password,
       ]);
-      return { status: StatusCodes.OK, msg: "Successfully added Theater",data:{theaterId,theaterName}};
+      return {
+        status: StatusCodes.OK,
+        msg: "Successfully added Theater",
+        data: { theaterId, theaterName },
+      };
     } catch (err) {
       console.log(err);
       throw err;
@@ -104,55 +108,117 @@ class Publisher {
   }
 
   static formatDate(dateString) {
-    const [day, month, year] = dateString.split(' ');
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const [day, month, year] = dateString.split(" ");
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     const monthIndex = months.indexOf(month);
-    return `${year}-${monthIndex + 1}-${day.padStart(2, '0')}`;
+    return `${year}-${monthIndex + 1}-${day.padStart(2, "0")}`;
   }
-  
+
   static formatTime(minuteString) {
-    let minutes = minuteString.split(" ")[0]
-    console.log(minutes)
+    let minutes = minuteString.split(" ")[0];
+    console.log(minutes);
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
-    return `${hours.toString().padStart(2, '0')}:${remainingMinutes.toString().padStart(2,'0')}`;
+    return `${hours.toString().padStart(2, "0")}:${remainingMinutes
+      .toString()
+      .padStart(2, "0")}`;
   }
 
   static async addMovie(movieData) {
-    const { imdbID, theaterId, price, date, time } = movieData;
+    var { imdbID, theaterId, price, date, time:times } = movieData;
     try {
       var ddate = new Date(date);
       const pool = await poolPromise;
-      const res = await axios.get(`http://www.omdbapi.com/?i=${imdbID}&plot=full&apikey=658d4be7`);
-      var {Title,Rated,Released,Runtime,Genre,Director,Plot,Poster,Actors,Language} = res.data;
+      const res = await axios.get(
+        `http://www.omdbapi.com/?i=${imdbID}&plot=full&apikey=658d4be7`
+      );
+      var {
+        Title,
+        Rated,
+        Released,
+        Runtime,
+        Genre,
+        Director,
+        Plot,
+        Poster,
+        Actors,
+        Language,
+      } = res.data;
 
-      if(Runtime === 'N/A') Runtime = "120 min"
+      if (Runtime === "N/A") Runtime = "120 min";
       Runtime = this.formatTime(Runtime);
 
-      if(Poster === 'N/A' || Poster === "") Poster="https://previews.123rf.com/images/macrovector/macrovector1501/macrovector150100418/35433359-cinema-movie-entertainment-poster-with-realistic-film-reel-vector-illustration.jpg"
+      if (Poster === "N/A" || Poster === "")
+        Poster =
+          "https://previews.123rf.com/images/macrovector/macrovector1501/macrovector150100418/35433359-cinema-movie-entertainment-poster-with-realistic-film-reel-vector-illustration.jpg";
 
-      if(Rated === 'N/A') Rated = 8;
-      Released = this.formatDate(Released)
+      if (Rated === "N/A") Rated = 8;
+      Released = this.formatDate(Released);
 
       const movieId = imdbID;
       var theaterMovieId = uuidv4();
-      const [rows] = await pool.query(`select movie_id from movie where movie_id = ?`,[movieId]);
-      if(rows.length <= 0){
-        const [{affectedRows}] = await pool.query(`insert into movie values(?,?,?,?,?,?,?,?,?,?,?)`,[movieId,Title,Plot,Runtime,Rated,Genre,Poster,Actors,Released,Language,Director]);
-        console.log(affectedRows)
+      const [rows] = await pool.query(
+        `select movie_id from movie where movie_id = ?`,
+        [movieId]
+      );
+      if (rows.length <= 0) {
+        const [{ affectedRows }] = await pool.query(
+          `insert into movie values(?,?,?,?,?,?,?,?,?,?,?)`,
+          [
+            movieId,
+            Title,
+            Plot,
+            Runtime,
+            Rated,
+            Genre,
+            Poster,
+            Actors,
+            Released,
+            Language,
+            Director,
+          ]
+        );
+        console.log(affectedRows);
       }
-      
-      const sql = "insert into theater_movie values(?,?,?,?,?)";
-      await pool.query(sql, [theaterMovieId, theaterId, movieId, price, ddate]);
+
+      const sql1 = `select tmt.time,tm.theater_movie_id from theater_movie tm join theater_movie_time tmt on tm.theater_movie_id = tmt.theater_movie_id
+      where tm.theater_id = ? and tm.date = ? and tm.movie_id = ?`;
+      const [rows2] = await pool.query(sql1, [theaterId, date, movieId]);
+      if (rows2.length <= 0) {
+        const sql = "insert into theater_movie values(?,?,?,?,?)";
+        await pool.query(sql, [
+          theaterMovieId,
+          theaterId,
+          movieId,
+          price,
+          ddate,
+        ]);
+      } else {
+        const runningShowTimes = rows2.map((item) => item.time);
+        times = times.filter((time) => !runningShowTimes.includes(time));
+        theaterMovieId = rows2[0].theater_movie_id;
+      }
+
       const paramList = [];
-      time.forEach(function (time) {
+      times.forEach(function (time) {
         paramList.push([uuidv4(), theaterMovieId, time]);
       });
-      // console.log(paramList);
+
       const sql5 = `insert into theater_movie_time values ?`;
       await pool.query(sql5, [paramList]);
-      // console.log(this.formatDate(Released));
-      // console.log(this.formatTime(Runtime));
       return { status: StatusCodes.OK, msg: "Successfully added movie" };
     } catch (err) {
       console.log(err);
@@ -165,11 +231,11 @@ class Publisher {
       const sql = `select tmt.theater_movie_time_id,m.movie_name,m.description,tm.price,tm.date,tmt.time,tm.theater_movie_id,m.movie_id from movie m join theater_movie tm join theater_movie_time tmt
       on tm.movie_id = m.movie_id and tmt.theater_movie_id = tm.theater_movie_id where tm.theater_id = ?`;
       const [rows] = await pool.query(sql, [theaterId]);
-      const data = rows.map(item => {
-        const cDate = item.date.setDate(item.date.getDate()+1);
-        return {...item,date:new Date(cDate)}
-      })
-      
+      const data = rows.map((item) => {
+        const cDate = item.date.setDate(item.date.getDate() + 1);
+        return { ...item, date: new Date(cDate) };
+      });
+
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data };
       }
@@ -186,7 +252,12 @@ class Publisher {
     }
   }
 
-  static async cancelPublishedMovie(theaterMovieTimeId,date,theaterMovieId,movieId) {
+  static async cancelPublishedMovie(
+    theaterMovieTimeId,
+    date,
+    theaterMovieId,
+    movieId
+  ) {
     try {
       const pool = await poolPromise;
       // // const [rows] = await pool.query(`select theater_movie_id from theater_movie_time where theater_movie_time_id = ?`,[theaterMovieTimeId]);
@@ -194,21 +265,30 @@ class Publisher {
       // console.log(rows)
       // console.log("cancel",theaterMovieTimeId,date)
       // const theaterMovieId = rows[0]["theater_movie_id"];
-      await pool.query(`delete from theater_movie_time where theater_movie_time_id = ?`, [theaterMovieTimeId]);
+      await pool.query(
+        `delete from theater_movie_time where theater_movie_time_id = ?`,
+        [theaterMovieTimeId]
+      );
       const sql = `select count(tm.theater_movie_id) as count from theater_movie_time tmt join theater_movie tm on tmt.theater_movie_id = tm.theater_movie_id where tm.date = ? and tm.theater_movie_id = ?`;
-      const [rows] = await pool.query(sql,[date,theaterMovieId]);
+      const [rows] = await pool.query(sql, [date, theaterMovieId]);
       const count = rows[0]["count"];
-      console.log("cancel "+count)
-      if(count <= 0){
-        await pool.query(`delete from theater_movie where theater_movie_id = ? and date = ?`,[theaterMovieId,date]);
-        const [rows2] = await pool.query(`select count(movie_id) as count from theater_movie where movie_id = ?`,[movieId]);
+      console.log("cancel " + count);
+      if (count <= 0) {
+        await pool.query(
+          `delete from theater_movie where theater_movie_id = ? and date = ?`,
+          [theaterMovieId, date]
+        );
+        const [rows2] = await pool.query(
+          `select count(movie_id) as count from theater_movie where movie_id = ?`,
+          [movieId]
+        );
         const moviesCount = rows2[0]["count"];
-        console.log(moviesCount)
-        if(moviesCount <= 0){
-          await pool.query(`delete from movie where movie_id = ?`,[movieId]);
+        console.log(moviesCount);
+        if (moviesCount <= 0) {
+          await pool.query(`delete from movie where movie_id = ?`, [movieId]);
         }
       }
-      return { status: StatusCodes.OK, msg:"Show deleted successfully" };
+      return { status: StatusCodes.OK, msg: "Show deleted successfully" };
     } catch (err) {
       console.error("Error deleting published movies:", err);
       throw {
