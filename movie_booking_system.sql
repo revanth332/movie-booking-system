@@ -112,6 +112,8 @@ select * from booking;
 select * from booking_details;
 select * from feedback;
 
+delete from user where user_id = '42d99d28-fa23-4ed1-84d1-c8b74a6f6f70';
+
 select count(tm.theater_movie_id) as count from theater_movie_time tmt join theater_movie tm on tmt.theater_movie_id = tm.theater_movie_id where tm.date = '2024-09-11' and tm.theater_movie_id = 'f1b6bbfe-eb64-4343-937a-0f41ae5c5791';
 
 -- delete from theater;
@@ -249,4 +251,10 @@ select tm.theater_movie_id,t.theater_name,m.movie_name,t.city,t.theater_address,
 
 select t.theater_name,m.movie_name,tm.date,tmt.time from booking b join theater_movie_time tmt join theater_movie tm join theater t join movie m
 on b.theater_movie_time_id = tmt.theater_movie_time_id and tmt.theater_movie_id = tm.theater_movie_id and tm.theater_id = t.theater_id and tm.movie_id = m.movie_id
-where b.booking_id='';
+where b.booking_id='dcef5164-9512-43ed-ba07-02a16382a634';
+select u.email,b.booking_id from user u join booking b on u.user_id = b.user_id where theater_movie_time_id = '09944505-fe6f-443d-8208-c890778ed40a' and b.status_id=1;
+select * from booking;
+select * from theater_movie_time;
+select * from theater_movie;
+
+select u.email,b.booking_id from user u join booking b on u.user_id = b.user_id where theater_movie_time_id = "97a4debb-572c-4696-9394-e29311ca48b9" and b.status_id=1;

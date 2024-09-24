@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import config from "../../../../config.js";
+// import config from "../../../../config.js";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
@@ -18,8 +18,7 @@ class User {
     }
   }
   static async registerUser(userData) {
-    const { firstName, lastName, phone, email, password } =
-      userData;
+    const { firstName, lastName, phone, email, password } = userData;
     try {
       const pool = await poolPromise;
       const userId = uuidv4();
@@ -33,7 +32,11 @@ class User {
         password,
       ]);
 
-      return { status: StatusCodes.OK, msg: "Successfully added User",data:{userId,userName:firstName} };
+      return {
+        status: StatusCodes.OK,
+        msg: "Successfully added User",
+        data: { userId, userName: firstName },
+      };
     } catch (err) {
       console.log(err);
       throw err;
@@ -55,28 +58,28 @@ class User {
             msg: "Login Successful",
             userId: rows[0]["user_id"],
             userName: rows[0]["first_name"],
-            role:"user"
+            role: "user",
           };
-        else{
+        else {
           const sql = `select theater_id,password,theater_name from theater where phone = ?`;
-        const [rows] = await pool.query(sql, [phone]);
-        if (rows.length > 0) {
-          const matched = await bcrypt.compare(password, rows[0].password);
-          if (matched)
-            return {
-              status: StatusCodes.OK,
-              msg: "Login Successful",
-              userId: rows[0]["theater_id"],
-              userName: rows[0]["theater_name"],
-              role:"publisher"
-            };
-          else throw new Error("Invalid credentials");
-        }
+          const [rows] = await pool.query(sql, [phone]);
+          if (rows.length > 0) {
+            const matched = await bcrypt.compare(password, rows[0].password);
+            if (matched)
+              return {
+                status: StatusCodes.OK,
+                msg: "Login Successful",
+                userId: rows[0]["theater_id"],
+                userName: rows[0]["theater_name"],
+                role: "publisher",
+              };
+            else throw new Error("Invalid credentials");
+          }
         }
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw err;
     }
   }
@@ -119,7 +122,7 @@ class User {
         [seats]
       );
       console.log(response);
-      return {status: StatusCodes.OK, msg: "Successfully booked movie"}
+      return { status: StatusCodes.OK, msg: "Successfully booked movie" };
     } catch (err) {
       console.log(err);
       throw err;
@@ -133,15 +136,21 @@ class User {
       const sql = `update booking set status_id = 2 where booking_id = ?`;
       const [{ affectedRows }] = await pool.query(sql, [bookingId]);
       if (affectedRows > 0) {
-        const [rows] = await pool.query(`select seat_id from booking_details where booking_id = ?`,[bookingId]);
-        const seatids = rows.map(seat => seat.seat_id);
+        const [rows] = await pool.query(
+          `select seat_id from booking_details where booking_id = ?`,
+          [bookingId]
+        );
+        const seatids = rows.map((seat) => seat.seat_id);
         console.log(seatids);
-        const res = await pool.query(`update seat set status_id = 3 where seat_id in (?)`,[seatids]);
+        const res = await pool.query(
+          `update seat set status_id = 3 where seat_id in (?)`,
+          [seatids]
+        );
         return { status: StatusCodes.OK, msg: "Successfully cancelled movie" };
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw err;
     }
   }
@@ -166,10 +175,10 @@ class User {
       const sql = `select tm.theater_movie_id,t.theater_name,m.movie_name,t.city,t.theater_address,tm.price,tm.date from theater_movie tm join theater t join movie m on t.theater_id = tm.theater_id and m.movie_id=tm.movie_id where tm.movie_id= ?`;
       const [rows] = await pool.query(sql, [movieId]);
       if (rows.length > 0) {
-        const data = rows.map(item => {
-          const cDate = item.date.setDate(item.date.getDate()+1);
-          return {...item,date:new Date(cDate)}
-        })
+        const data = rows.map((item) => {
+          const cDate = item.date.setDate(item.date.getDate() + 1);
+          return { ...item, date: new Date(cDate) };
+        });
         return { status: StatusCodes.OK, data };
       }
       throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };

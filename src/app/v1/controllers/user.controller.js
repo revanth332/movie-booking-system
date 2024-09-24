@@ -21,7 +21,7 @@ export async function registerUser(req, res) {
       expiresIn: "1d",
     });
 
-    return res.status(response.status).send({userId:response.data.theaterId,userName:response.data.userName,token,role:"user"});
+    return res.status(response.status).send({userId:response.data.userId,userName:response.data.userName,token,role:"user"});
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);

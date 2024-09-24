@@ -284,14 +284,15 @@ class Publisher {
       // const theaterMovieId = rows[0]["theater_movie_id"];
       const sql2 = `select u.email,b.booking_id from user u join booking b on u.user_id = b.user_id where theater_movie_time_id = ? and b.status_id=1;`;
       const [rows3] = await pool.query(sql2,[theaterMovieTimeId]);
-      const email = rows3[0].email;
+      if(rows3.length > 0){
       const bookingId = rows3[0].booking_id;
       const sql1 = `select t.theater_name,m.movie_name,tm.date,tmt.time from booking b join theater_movie_time tmt join theater_movie tm join theater t join movie m
       on b.theater_movie_time_id = tmt.theater_movie_time_id and tmt.theater_movie_id = tm.theater_movie_id and tm.theater_id = t.theater_id and tm.movie_id = m.movie_id
-      where b.booking_id = ? `;
+      where b.booking_id = ?`;
       const [tickets] = await pool.query(sql1,[bookingId]);
       const ticket = tickets[0]
       console.log(ticket)
+      }
       await pool.query(
         `delete from theater_movie_time where theater_movie_time_id = ?`,
         [theaterMovieTimeId]
@@ -323,39 +324,44 @@ class Publisher {
         }
     });
 
-    const html = `<!DOCTYPE html>
-          <html>
-          <head>
-            <title>Movie Cancelled</title>
-          </head>
-          <body>
-            <div style="background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 5px; padding: 20px; margin: 20px auto; width: 80%; max-width: 500px;">
-              <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;color:red">Movie Cancellation</h2>
-              <p>We regret to inform you that your booking for the following movie has been canceled due to technical issues:</p>
-              <table>
-                <tr>
-                  <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Movie Name</th>
-                  <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Theater Name</th>
-                  <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Date</th>
-                  <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Time</th>
-                </tr>
-                <tr>
-                  <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.movie_name}</td>
-                  <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.theater_name}</td>
-                  <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.date.toString().substring(0,10)}</td>
-                  <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${this.convertTo12HourFormat(ticket.time.substring(0,5))}</td>
-                </tr>
-              </table>
-              <p>We apologize for any inconvenience this may cause. Please contact our customer support for assistance.</p>
-            </div>
-          </body>
-          </html>`
-      const mailDetails = {
+
+      if(rows3.length > 0){
+
+        const html = `<!DOCTYPE html>
+        <html>
+        <head>
+          <title>Movie Cancelled</title>
+        </head>
+        <body>
+          <div style="background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 5px; padding: 20px; margin: 20px auto; width: 80%; max-width: 500px;">
+            <h2 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;color:red">Movie Cancellation</h2>
+            <p>We regret to inform you that your booking for the following movie has been canceled due to technical issues:</p>
+            <table>
+              <tr>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Movie Name</th>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Theater Name</th>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Date</th>
+                <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Time</th>
+              </tr>
+              <tr>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.movie_name}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.theater_name}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.date.toString().substring(0,10)}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${this.convertTo12HourFormat(ticket.time.substring(0,5))}</td>
+              </tr>
+            </table>
+            <p>We apologize for any inconvenience this may cause. Please contact our customer support for assistance.</p>
+          </div>
+        </body>
+        </html>`
+
+        const email = rows3[0].email;
+        const mailDetails = {
         from: process.env.APP_MAIL_USER,
         to: email,
         subject: "Movie Cancelled",
         html
-    };
+      };
 
       mailTransporter.sendMail(mailDetails, function(err, data) {
         if(err) {
@@ -364,6 +370,7 @@ class Publisher {
             console.log('Email sent successfully');
         }
     });
+  }
       return { status: StatusCodes.OK, msg: "Show deleted successfully" };
     } catch (err) {
       console.error("Error deleting published movies:", err);

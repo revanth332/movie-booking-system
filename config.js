@@ -1,8 +1,8 @@
 import path, { dirname } from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 const args = process.argv && process.argv.slice(2);
 const env = args && args.length > 0 ? args[0] : 'development';
 
