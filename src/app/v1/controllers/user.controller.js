@@ -64,6 +64,7 @@ export async function getMovies(req, res) {
   try {
     const response = await User.getMovies();
     res.status(response.status).send(response.data);
+    console.log(req)
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);

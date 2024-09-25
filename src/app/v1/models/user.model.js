@@ -77,7 +77,7 @@ class User {
           }
         }
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "Invalid credentials" };
     } catch (err) {
       console.log(err);
       throw err;
