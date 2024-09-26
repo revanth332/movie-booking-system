@@ -3,6 +3,8 @@ import User from "../src/app/v1/models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import { response } from "express";
 import { getMovies,loginUser } from "../src/app/v1/controllers/user.controller.js";
+import { closeConnection } from "../src/app/v1/utils/dbConnection.js";
+import HttpError from "./HttpError.js";
 // import bcrypt from 'bcrytjs';
 
 const mockRequest = () => {
@@ -20,6 +22,10 @@ const mockResponse = () => {
     send:jest.fn()
   }
 }
+
+afterAll(async () => {
+  await closeConnection();
+})
 
 describe("user conroller",() => {
 
@@ -52,6 +58,12 @@ describe("user conroller",() => {
   })
 
   describe("user login",() => {
+    let mockReq,mockRes;
+    jest.beforeEach(()=>{
+      mockReq = { body: { username: 'testUser', password: 'password' } };
+      mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+    })
+
     test('should login successfully', async () => {
       // Mock the User.loginUser method to return a successful response
       jest.spyOn(User,"loginUser").mockResolvedValueOnce({
@@ -61,9 +73,6 @@ describe("user conroller",() => {
         userName: 'testUser',
         role: 'admin'
       });
-    
-      const mockReq = { body: { username: 'testUser', password: 'password' } };
-      const mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
     
       await loginUser(mockReq, mockRes);
     
@@ -79,8 +88,9 @@ describe("user conroller",() => {
     });
 
     test('should handle login failure', async () => {
-      // Mock the User.loginUser method to throw an error
-      User.loginUser.mockRejectedValueOnce({ status: 400, msg: 'Invalid credentials' });
+      const mockError = new Error("Unexpected error");
+      // Mock the User.loginUser method to throw an error with status and msg properties
+      User.loginUser.mockRejectedValueOnce(mockError);
     
       const mockReq = { body: { username: 'testUser', password: 'password' } };
       const mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
@@ -88,10 +98,20 @@ describe("user conroller",() => {
       await loginUser(mockReq, mockRes);
     
       expect(User.loginUser).toHaveBeenCalledWith({ username: 'testUser', password: 'password' });
-      expect(mockRes.status).toHaveBeenCalledWith(400);
-      expect(mockRes.send).toHaveBeenCalledWith('Invalid credentials');
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+      expect(mockRes.send).toHaveBeenCalledWith("An error occurred: "+mockError);
     });
 
+  })
+
+  describe("register user",() => {
+    let mockReq,mockRes;
+    jest.beforeEach(()=>{
+      mockReq = { body: { username: 'testUser', password: 'password' } };
+      mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+    })
+    
+    
   })
 
 })

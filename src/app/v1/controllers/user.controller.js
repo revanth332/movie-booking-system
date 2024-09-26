@@ -21,7 +21,14 @@ export async function registerUser(req, res) {
       expiresIn: "1d",
     });
 
-    return res.status(response.status).send({userId:response.data.userId,userName:response.data.userName,token,role:"user"});
+    return res
+      .status(response.status)
+      .send({
+        userId: response.data.userId,
+        userName: response.data.userName,
+        token,
+        role: "user",
+      });
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
@@ -36,25 +43,23 @@ export async function loginUser(req, res) {
   const userData = req.body;
   try {
     const response = await User.loginUser(userData);
-    console.log(response);
     const token = sign({ userId: response.userId }, config.SECRET_KEY, {
       expiresIn: "1d",
     });
-    return res
-      .status(response.status)
-      .send({
-        msg: response.msg,
-        token,
-        userId: response.userId,
-        userName: response.userName,
-        role:response.role
-      });
+    return res.status(response.status).send({
+      msg: response.msg,
+      token,
+      userId: response.userId,
+      userName: response.userName,
+      role: response.role,
+    });
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
     } else {
-      console.log(err)
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred: "+err);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .send("An error occurred: " + err);
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to log the user",err})
   }
@@ -64,7 +69,6 @@ export async function getMovies(req, res) {
   try {
     const response = await User.getMovies();
     res.status(response.status).send(response.data);
-    console.log(req)
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
@@ -77,7 +81,7 @@ export async function getMovies(req, res) {
 
 export async function bookMovie(req, res) {
   const bookingData = req.body;
-  console.log()
+  console.log();
   try {
     const response = await User.bookMovie(bookingData);
     res.status(response.status).send("Booked succesfully");
@@ -200,7 +204,7 @@ export async function getTheaterTimeMovieId(req, res) {
 
 export async function getMoviesByGenre(req, res) {
   const genre = req.query.genre;
-  console.log(genre)
+  console.log(genre);
   try {
     const response = await User.getMoviesByGenre(genre);
     return res.status(200).json(response.data);
