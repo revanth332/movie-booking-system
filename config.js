@@ -1,26 +1,13 @@
-import path, { dirname } from 'path';
+
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
+
 const args = process.argv && process.argv.slice(2);
 const env = args && args.length > 0 ? args[0] : 'development';
 
-let config; // Define config variable outside try-catch block
+let config; 
 
 try {
-    // let dotenvPath = path.resolve(__dirname, '.env');
-    // if (!env)
-    //     dotenvPath = path.resolve(__dirname, '.env'); 
-    // else
-    //     dotenvPath = path.resolve(__dirname, `.env.${env}`);
-
-    // Load environment variables from the specified .env file
-    // const result = dotenv.config({ path: dotenvPath });
     dotenv.config();
-    // if (result.error) {
-    //     throw result.error;
-    // }
 
     config = {
         ENV:env,
@@ -40,4 +27,4 @@ try {
     console.log(error);
 }
 
-export default config; // Export config inside try-catch block
+export default config; 

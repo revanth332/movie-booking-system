@@ -8,7 +8,7 @@ const { sign } = pkg;
 
 export async function registerUser(req, res) {
   const userData = req.body;
-  console.log(userData);
+
   try {
     const salt = await bcrypt.genSalt(5);
     const hashedPassword = await bcrypt.hash(userData.password, salt);
@@ -140,20 +140,6 @@ export async function getTheaters(req, res) {
   }
 }
 
-export async function submitFeedback(req, res) {
-  const feedbackData = req.body;
-  try {
-    const response = await User.submitFeedback(feedbackData);
-    res.status(response.status).send(response.msg);
-  } catch (err) {
-    if (err.status) {
-      res.status(err.status).send(err.message);
-    } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
-    }
-    // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
-  }
-}
 
 export async function getBookings(req, res) {
   const userId = req.query.userId;
@@ -164,7 +150,7 @@ export async function getBookings(req, res) {
     if (err.status) {
       res.status(err.status).send(err.message);
     } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
   }
@@ -179,7 +165,7 @@ export async function getSeats(req, res) {
     if (err.status) {
       res.status(err.status).send(err.message);
     } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
   }
@@ -196,7 +182,7 @@ export async function getTheaterTimeMovieId(req, res) {
     if (err.status) {
       res.status(err.status).send(err.message);
     } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occured");
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
   }
@@ -207,7 +193,7 @@ export async function getMoviesByGenre(req, res) {
   console.log(genre);
   try {
     const response = await User.getMoviesByGenre(genre);
-    return res.status(200).json(response.data);
+    return res.status(200).send(response.data);
   } catch (err) {
     console.error("Error fetching movies:", err);
     res.status(500).send("Failed to fetch movies");

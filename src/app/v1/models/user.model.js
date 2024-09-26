@@ -205,24 +205,6 @@ class User {
     }
   }
 
-  static async submitFeedback(feedbackData) {
-    const { userId, movieId, rating } = feedbackData;
-    try {
-      const pool = await poolPromise;
-      const sql = `insert into feedback values(uuid(),?,?,?)`;
-      const [{ affectedRows }] = await pool.query(sql, [
-        movieId,
-        userId,
-        rating,
-      ]);
-      if (affectedRows > 0) {
-        return { status: StatusCodes.OK, msg: "Feedback added successfully" };
-      }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
-    } catch (err) {
-      throw err;
-    }
-  }
 
   static async getTrendingMovies() {
     try {

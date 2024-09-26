@@ -14,8 +14,6 @@ router.route("/getTheaters").get(getTheaters);
 
 router.route("/getBookings").get(getBookings)
 
-router.route("/submitFeedback").post(submitFeedback);
-
 router.route("/getTheaterTimeMovieId").get(getTheaterTimeMovieId);
 
 router.route("/getSeats").get(getSeats);
