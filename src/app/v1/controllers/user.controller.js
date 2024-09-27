@@ -17,7 +17,7 @@ export async function registerUser(req, res) {
       password: hashedPassword,
     });
 
-    const token = sign({ userId: response.data.theaterId }, config.SECRET_KEY, {
+    const token = await pkg.sign({ userId: response.data.userId }, config.SECRET_KEY, {
       expiresIn: "1d",
     });
 

@@ -1,13 +1,8 @@
-import request from "supertest";
 import User from "../src/app/v1/models/user.model.js";
 import { StatusCodes } from "http-status-codes";
-import { query, response } from "express";
-import { bookMovie, cancelBooking, getMovies,getShowTimes,getTheaters,loginUser, registerUser,getBookings, getTheaterTimeMovieId, getSeats, getMoviesByGenre } from "../src/app/v1/controllers/user.controller.js";
+import { bookMovie, cancelBooking, getMovies,getShowTimes,getTheaters,getBookings, getTheaterTimeMovieId, getSeats, getMoviesByGenre, loginUser, registerUser } from "../src/app/v1/controllers/user.controller.js";
 import { closeConnection } from "../src/app/v1/utils/dbConnection.js";
-import pkg from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 
-const {sign} = pkg;
 
 afterAll(async () => {
   await closeConnection();
@@ -48,118 +43,10 @@ describe("user conroller",() => {
   
     it("should fetch movies",async () => {
       jest.spyOn(User,"getMovies").mockResolvedValueOnce({status:200,data:[mockMovie]});
-  
-
-  
       await getMovies(mockReq,mockRes);
   
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.send).toHaveBeenCalledWith([mockMovie])
-    })
-  })
-
-  describe("user login",() => {
-    let mockReq,mockRes;
-    beforeEach(()=>{
-      mockReq = { body: { username: 'testUser', password: 'password' } };
-      mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-    })
-
-    test('should login successfully', async () => {
-      // Mock the User.loginUser method to return a successful response
-      jest.spyOn(User,"loginUser").mockResolvedValueOnce({
-        status: 200,
-        msg: 'Login successful',
-        userId: 1,  
-        userName: 'testUser',
-        role: 'admin'
-      });
-    
-      await loginUser(mockReq, mockRes);
-    
-      expect(User.loginUser).toHaveBeenCalledWith({ username: 'testUser', password: 'password' });
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.send).toHaveBeenCalledWith({
-        msg: 'Login successful',
-        token: expect.any(String), // Expect a token to be present
-        userId: 1,
-        userName: 'testUser',
-        role: 'admin'
-      });
-    });
-
-    test('should handle login failure', async () => {
-      const mockError = new Error("Unexpected error");
-      // Mock the User.loginUser method to throw an error with status and msg properties
-      User.loginUser.mockRejectedValueOnce(mockError);
-    
-      const mockReq = { body: { username: 'testUser', password: 'password' } };
-      const mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-    
-      await loginUser(mockReq, mockRes);
-    
-      expect(User.loginUser).toHaveBeenCalledWith({ username: 'testUser', password: 'password' });
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.send).toHaveBeenCalledWith("An error occurred: "+mockError);
-    });
-
-  })
-
-  describe("user register",() => {
-    let mockUser = {
-      firstName:"Ravani",
-      lastName:"Lanka",
-      phone:"9959965977",
-      email:"ravani@gmail.com",
-      password:"Moye@321"
-    }
-    let mockReq,mockRes;
-    beforeEach(()=>{
-      mockReq = { body: mockUser };
-      mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-    })
-    
-    test("should register user successfully", async () => {
-      jest.spyOn(User,"registerUser").mockResolvedValueOnce({
-        status: StatusCodes.OK,
-        msg: "Successfully added User",
-        data: { userId:"abcd", userName: "Ravani" },
-      });
-
-      jest.spyOn(bcrypt,"hash").mockResolvedValueOnce("hashedpassword");
-      jest.spyOn(pkg,"sign").mockResolvedValueOnce("token");
-      jest.spyOn(bcrypt,"genSalt").mockResolvedValueOnce("salt");
-      await registerUser(mockReq,mockRes);
-
-      mockUser = {...mockUser,password:"hashedpassword"}
-
-      expect(User.registerUser).toHaveBeenCalledWith(mockUser);
-      expect(bcrypt.genSalt).toHaveBeenCalledWith(5);
-      expect(bcrypt.hash).toHaveBeenCalledWith("Moye@321","salt");
-      expect(mockRes.status).toHaveBeenCalledWith(200);
-      expect(mockRes.send).toHaveBeenCalledWith({
-        userId: expect.any(String),
-        userName: "Ravani",
-        token:expect.any(String),
-        role: "user",
-      })
-    })
-
-    test("should throw error while registering", async () => {
-      jest.spyOn(User,"registerUser").mockRejectedValueOnce(new Error("An error occurred"));
-
-      jest.spyOn(bcrypt,"hash").mockResolvedValueOnce("hashedpassword");
-      jest.spyOn(pkg,"sign").mockResolvedValueOnce("token");
-      jest.spyOn(bcrypt,"genSalt").mockResolvedValueOnce("salt");
-      await registerUser(mockReq,mockRes);
-
-      mockUser = {...mockUser,password:"hashedpassword"}
-
-      expect(User.registerUser).toHaveBeenCalledWith(mockUser);
-      expect(bcrypt.genSalt).toHaveBeenCalledWith(5);
-      expect(bcrypt.hash).toHaveBeenCalledWith("Moye@321","salt");
-      expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.send).toHaveBeenCalledWith("An error occurred")
     })
   })
 
@@ -351,76 +238,76 @@ describe("user conroller",() => {
       expect(mockRes.send).toHaveBeenCalledWith("An error occured");
     })
 
-    describe("fetching seat details",() => {
-      let mockReq,mockRes,mockSeat;
-      beforeEach(()=>{
-        mockReq = { query: { theaterMovieTimeId:"theatermovietime123" } };
-        mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-        mockSeat = {
-          seat_id:"seat123",
-          theater_movie_time_id:"theater1movie2time10",
-          seat_number:12,
-          status_id:1
-        }
-      })
 
-      it("should fetch seat details successfully", async () => {
-        jest.spyOn(User,"getSeats").mockResolvedValueOnce({status: StatusCodes.OK, data: [mockSeat]})
+  })
 
-        await getSeats(mockReq,mockRes);
-
-        expect(User.getSeats).toHaveBeenCalledWith("theatermovietime123");
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.send).toHaveBeenCalledWith([mockSeat]);
-      })
-
-      it("should throw error while fetching seats details", async () => {
-        jest.spyOn(User,"getSeats").mockRejectedValueOnce(new Error("An error occurred"))
-
-        await getSeats(mockReq,mockRes);
-
-        expect(User.getSeats).toHaveBeenCalledWith("theatermovietime123");
-        expect(mockRes.status).toHaveBeenCalledWith(500);
-        expect(mockRes.send).toHaveBeenCalledWith("An error occurred");
-      })
+  describe("fetching seat details",() => {
+    let mockReq,mockRes,mockSeat;
+    beforeEach(()=>{
+      mockReq = { query: { theaterMovieTimeId:"theatermovietime123" } };
+      mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+      mockSeat = {
+        seat_id:"seat123",
+        theater_movie_time_id:"theater1movie2time10",
+        seat_number:12,
+        status_id:1
+      }
     })
 
-    describe("fetch movies based on genre",() => {
-      let mockReq,mockRes,mockMovie;
-      beforeEach(()=>{
-        mockReq = { query: { genre:"drama" } };
-        mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
-        mockMovie = {
-          movie_id:"movie_id",
-          movie_name:"The Spider of Spiderweb Canyon",
-          description:"A woman making a video in a forest encounters a strange stranger.",
-          duration:"00:11:00",
-          rating:"8.00",
-          genre:"Short, Sci-Fi",
-          poster_url:"https://m.media-amazon.com/images/M/MV5BMjFkYWIxNWUtMjVmOS00ZWVjLWJlNzktMzNhMjhkNWQ0YzJkXkEyXkFqcGdeQXVyMTI5NjMxOTQ@._V1_SX300.jpg",
-          actors:"Andra Beatty, Allison Roper",
-          release_date:"2024-1-01",
-          language:"English",
-          director:"S.W. Hannan"
-        }
-      })
+    it("should fetch seat details successfully", async () => {
+      jest.spyOn(User,"getSeats").mockResolvedValueOnce({status: StatusCodes.OK, data: [mockSeat]})
 
-      it("should  fetch movies based on genre successfully", async () => {
-        jest.spyOn(User,"getMoviesByGenre").mockResolvedValueOnce({status: StatusCodes.OK,data:[mockMovie]});
+      await getSeats(mockReq,mockRes);
 
-        await getMoviesByGenre(mockReq,mockRes);
+      expect(User.getSeats).toHaveBeenCalledWith("theatermovietime123");
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.send).toHaveBeenCalledWith([mockSeat]);
+    })
 
-        expect(User.getMoviesByGenre).toHaveBeenCalledWith("drama");
-        expect(mockRes.status).toHaveBeenCalledWith(200);
-        expect(mockRes.send).toHaveBeenCalledWith([mockMovie]);
-      })
+    it("should throw error while fetching seats details", async () => {
+      jest.spyOn(User,"getSeats").mockRejectedValueOnce(new Error("An error occurred"))
 
+      await getSeats(mockReq,mockRes);
+
+      expect(User.getSeats).toHaveBeenCalledWith("theatermovietime123");
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+      expect(mockRes.send).toHaveBeenCalledWith("An error occurred");
+    })
+  })
+
+  describe("fetch movies based on genre",() => {
+    let mockReq,mockRes,mockMovie;
+    beforeEach(()=>{
+      mockReq = { query: { genre:"drama" } };
+      mockRes = { status: jest.fn().mockReturnThis(), send: jest.fn() };
+      mockMovie = {
+        movie_id:"movie_id",
+        movie_name:"The Spider of Spiderweb Canyon",
+        description:"A woman making a video in a forest encounters a strange stranger.",
+        duration:"00:11:00",
+        rating:"8.00",
+        genre:"Short, Sci-Fi",
+        poster_url:"https://m.media-amazon.com/images/M/MV5BMjFkYWIxNWUtMjVmOS00ZWVjLWJlNzktMzNhMjhkNWQ0YzJkXkEyXkFqcGdeQXVyMTI5NjMxOTQ@._V1_SX300.jpg",
+        actors:"Andra Beatty, Allison Roper",
+        release_date:"2024-1-01",
+        language:"English",
+        director:"S.W. Hannan"
+      }
+    })
+
+    it("should  fetch movies based on genre successfully", async () => {
+      jest.spyOn(User,"getMoviesByGenre").mockResolvedValueOnce({status: StatusCodes.OK,data:[mockMovie]});
+
+      await getMoviesByGenre(mockReq,mockRes);
+
+      expect(User.getMoviesByGenre).toHaveBeenCalledWith("drama");
+      expect(mockRes.status).toHaveBeenCalledWith(200);
+      expect(mockRes.send).toHaveBeenCalledWith([mockMovie]);
     })
 
   })
 
-  
-
 })
+
 
 

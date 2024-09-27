@@ -1,5 +1,4 @@
 import { StatusCodes } from "http-status-codes";
-import config from "../../../../config.js";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
@@ -7,27 +6,9 @@ import axios from "axios";
 import nodemailer from 'nodemailer'
 
 class Publisher {
-  static async findPublisher(userId) {
-    console.log(userId);
-    try {
-      const pool = await poolPromise;
-      const sql = `select theater_id from theater where theater_id = ?`;
-      const [rows] = await pool.query(sql, [userId]);
-      if (rows.length > 0) {
-        return {
-          status: StatusCodes.OK,
-          msg: "publisher found",
-        };
-      }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
-  }
 
   static async registerTheater(theaterData) {
-    // console.log("register")
+    console.log(theaterData)
     const {
       theaterName,
       email,
@@ -68,6 +49,7 @@ class Publisher {
       const pool = await poolPromise;
       const sql = `select theater_id,password,theater_name from theater where phone = ?`;
       const [rows] = await pool.query(sql, [phone]);
+      console.log(rows)
       if (rows.length > 0) {
         const matched = await bcrypt.compare(password, rows[0].password);
         if (matched)
@@ -86,27 +68,6 @@ class Publisher {
     }
   }
 
-  static async registerMovie(movieData) {
-    // console.log("register")
-    const { movieName, description, duration, rating } = movieData;
-    try {
-      const pool = await poolPromise;
-      const sql = `insert into movie values(UUID(),?,?,?,?)`;
-      const [{ affectedRows }] = await pool.query(sql, [
-        movieName,
-        description,
-        duration,
-        rating,
-      ]);
-      if (affectedRows > 0) {
-        return { status: StatusCodes.OK, msg: "Successfully added movie" };
-      }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
-  }
 
   static formatDate(dateString) {
     const [day, month, year] = dateString.split(" ");
@@ -373,7 +334,7 @@ class Publisher {
   }
       return { status: StatusCodes.OK, msg: "Show deleted successfully" };
     } catch (err) {
-      console.error("Error deleting published movies:", err);
+      // console.error("Error deleting published movies:", err);
       throw {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
         msg: "An error occurred",

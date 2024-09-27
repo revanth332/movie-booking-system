@@ -11,9 +11,10 @@ export async function loginPublisher(req, res) {
   try {
     const response = await Publisher.loginPublisher(userData);
     console.log(response);
-    const token = sign({ userId: response.theaterId }, config.SECRET_KEY, {
+    const token = await pkg.sign({ userId: response.theaterId }, config.SECRET_KEY, {
       expiresIn: "1d",
     });
+    console.log(token)
     return res.status(response.status).send({
       msg: response.msg,
       token,
@@ -38,23 +39,23 @@ export async function registerTheater(req, res) {
   try {
     const salt = await bcrypt.genSalt(5);
     const hashedPassword = await bcrypt.hash(theaterData.password, salt);
-    console.log(theaterData)
+    // console.log(theaterData)
     const response = await Publisher.registerTheater({
       ...theaterData,
       password: hashedPassword,
     });
-    
 
-    const token = sign({ userId: response.data.theaterId }, config.SECRET_KEY, {
+    const token = await pkg.sign({ userId: response.data.theaterId }, config.SECRET_KEY, {
       expiresIn: "1d",
     });
+    console.log(token)
 
     return res.status(response.status).send({theaterId:response.data.theaterId,theaterName:response.data.theaterName,token,role:"publisher"});
   } catch (err) {
     if (err.status) {
       res.status(err.status).send(err.message);
     } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("err");
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occurred");
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to create the Theater",err})
   }
@@ -69,7 +70,7 @@ export async function addMovie(req, res) {
     if (err.status) {
       return res.status(err.status).send(err.message);
     } else {
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occured");
     }
     // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to add the movie",err})
   }
@@ -110,11 +111,11 @@ export async function getPublishedMovies(req, res) {
   const theaterId = req.query.theaterId;
   try {
     const response = await Publisher.getPublishedMovies(theaterId);
-    res.status(200).json(response.data);
+    res.status(200).send(response.data);
   } catch (err) {
-    console.error("Error fetching published movies:", err);
+    // console.error("Error fetching published movies:", err);
     res.status(500).send("Failed to fetch movies"); 
-  }
+  } 
 }
 
 
@@ -126,9 +127,9 @@ export async function cancelPublishedMovie(req, res) {
   console.log("theaterMovieTimeId")
   try {
     const response = await Publisher.cancelPublishedMovie(theaterMovieTimeId,date,theaterMovieId,movieId);
-    res.status(200).json(response.msg);
+    res.status(200).send(response.msg);
   } catch (err) {
-    console.error("Error fetching published movies:", err);
+    // console.error("Error fetching published movies:", err);
     res.status(500).send("Failed to fetch movies");
   }
 }
