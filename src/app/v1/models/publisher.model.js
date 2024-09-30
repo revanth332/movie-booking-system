@@ -68,7 +68,6 @@ class Publisher {
     }
   }
 
-
   static formatDate(dateString) {
     const [day, month, year] = dateString.split(" ");
     const months = [
@@ -201,7 +200,6 @@ class Publisher {
   
     return `${num_hours}:${minutes} ${period}`;
   }
-  
 
   static async getPublishedMovies(theaterId) {
     try {
