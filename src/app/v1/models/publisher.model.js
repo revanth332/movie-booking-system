@@ -18,7 +18,16 @@ class Publisher {
       theaterAddress,
       password,
     } = theaterData;
+
+
     try {
+
+      for(let key in theaterData){
+        if(theaterData[key] === null || theaterData[key] === undefined || theaterData[key] === ""){
+          throw new Error();
+        }
+      }
+
       const pool = await poolPromise;
       const theaterId = uuidv4();
       const sql = `insert into theater values(?,?,?,?,?,?,?,?)`;
@@ -49,7 +58,7 @@ class Publisher {
       const pool = await poolPromise;
       const sql = `select theater_id,password,theater_name from theater where phone = ?`;
       const [rows] = await pool.query(sql, [phone]);
-      console.log(rows)
+      // console.log(rows)
       if (rows.length > 0) {
         const matched = await bcrypt.compare(password, rows[0].password);
         if (matched)
@@ -243,6 +252,7 @@ class Publisher {
       // const theaterMovieId = rows[0]["theater_movie_id"];
       const sql2 = `select u.email,b.booking_id from user u join booking b on u.user_id = b.user_id where theater_movie_time_id = ? and b.status_id=1;`;
       const [rows3] = await pool.query(sql2,[theaterMovieTimeId]);
+      console.log(rows3)
       if(rows3.length > 0){
       const bookingId = rows3[0].booking_id;
       const sql1 = `select t.theater_name,m.movie_name,tm.date,tmt.time from booking b join theater_movie_time tmt join theater_movie tm join theater t join movie m

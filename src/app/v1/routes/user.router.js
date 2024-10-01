@@ -1,6 +1,6 @@
 import express from 'express'
 const router = express.Router();
-import {bookMovie,cancelBooking,getBookings,getMovies,getShowTimes,getTheaters,submitFeedback,getTheaterTimeMovieId,getSeats,getMoviesByGenre } from '../controllers/user.controller.js';
+import {bookMovie,cancelBooking,getBookings,getMovies,getShowTimes,getTheaters,getTheaterTimeMovieId,getSeats,getMoviesByGenre } from '../controllers/user.controller.js';
 
 router.route('/getMovies').get(getMovies)
 

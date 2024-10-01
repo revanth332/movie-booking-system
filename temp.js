@@ -1,4 +1,6 @@
 import pkg from "jsonwebtoken";
-import te from "./src/app/v1/utils/dbConnection.js";
+import {poolPromise} from "./src/app/v1/utils/dbConnection.js";
+import mysql  from "mysql2/promise";
 
-console.log(poolPromise)
+
+console.log(mysql)

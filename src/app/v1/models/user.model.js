@@ -20,6 +20,7 @@ class User {
   static async registerUser(userData) {
     const { firstName, lastName, phone, email, password } = userData;
     try {
+      if(firstName === "" || lastName === "" || phone === "" || email === "" || password === "") throw err;
       const pool = await poolPromise;
       const userId = uuidv4();
       const sql = `insert into user values(?,?,?,?,?,?)`;
@@ -38,7 +39,7 @@ class User {
         data: { userId, userName: firstName },
       };
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       throw err;
     }
   }
@@ -100,9 +101,14 @@ class User {
 
   static async bookMovie(bookingData) {
     const { userId, seats, theaterTimeMovieId } = bookingData;
+    
     console.log("hello");
     console.log(bookingData);
     try {
+      if(userId === "" || seats.length  === 0 || theaterTimeMovieId === "") {
+        throw { status: StatusCodes.BAD_REQUEST, msg: "Invalid booking data" };
+      }
+
       const pool = await poolPromise;
       const bookingId = uuidv4();
       await pool.query(`insert into booking values (?,?,?,?,?)`, [
@@ -132,6 +138,9 @@ class User {
   static async cancelBooking(bookingData) {
     const { bookingId } = bookingData;
     try {
+      if(bookingId === undefined || bookingId === null || bookingId === ""){
+        throw { status: StatusCodes.BAD_REQUEST, msg: "Invalid booking id" };
+      }
       const pool = await poolPromise;
       const sql = `update booking set status_id = 2 where booking_id = ?`;
       const [{ affectedRows }] = await pool.query(sql, [bookingId]);
@@ -148,7 +157,7 @@ class User {
         );
         return { status: StatusCodes.OK, msg: "Successfully cancelled movie" };
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "BookingId not found" };
     } catch (err) {
       console.log(err);
       throw err;
@@ -163,7 +172,7 @@ class User {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "No valid times" };
     } catch (err) {
       throw err;
     }
@@ -181,7 +190,7 @@ class User {
         });
         return { status: StatusCodes.OK, data };
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "Not a valid movie id" };
     } catch (err) {
       console.log(err);
       throw err;
@@ -198,7 +207,8 @@ class User {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "User Not Found" };
+
     } catch (err) {
       console.log(err);
       throw err;
@@ -230,7 +240,7 @@ class User {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "Invalid theaterMovieId or time" };
     } catch (err) {
       throw err;
     }
@@ -244,7 +254,8 @@ class User {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "Invalid  theater_movie_time_id" };
+
     } catch (err) {
       console.log(err);
       throw err;
@@ -259,7 +270,7 @@ class User {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      throw { status: StatusCodes.CONFLICT, msg: "Bad sql syntax" };
+      throw { status: StatusCodes.NOT_FOUND, msg: "genre not found" };
     } catch (err) {
       console.log(err);
       throw err;

@@ -65,6 +65,7 @@ export async function loginUser(req, res) {
   }
 }
 
+
 export async function getMovies(req, res) {
   try {
     const response = await User.getMovies();
@@ -81,7 +82,6 @@ export async function getMovies(req, res) {
 
 export async function bookMovie(req, res) {
   const bookingData = req.body;
-  console.log();
   try {
     const response = await User.bookMovie(bookingData);
     res.status(response.status).send("Booked succesfully");
@@ -113,6 +113,7 @@ export async function cancelBooking(req, res) {
 export async function getShowTimes(req, res) {
   const theaterMovieId = req.query.theaterMovieId;
   try {
+    if(theaterMovieId === "" || theaterMovieId === undefined || theaterMovieId === null) throw {status:StatusCodes.BAD_REQUEST,message:"Invalid Id"}
     const response = await User.getShowTimes(theaterMovieId);
     res.status(response.status).send(response.data);
   } catch (err) {
@@ -128,6 +129,7 @@ export async function getShowTimes(req, res) {
 export async function getTheaters(req, res) {
   const movieId = req.query.movieId;
   try {
+    if(movieId === null || movieId === undefined || movieId === "") throw {status : StatusCodes.BAD_REQUEST,message:"Movie Id not found"}
     const response = await User.getTheaters(movieId);
     res.status(response.status).send(response.data);
   } catch (err) {
@@ -144,6 +146,8 @@ export async function getTheaters(req, res) {
 export async function getBookings(req, res) {
   const userId = req.query.userId;
   try {
+    if(userId === null || userId === undefined || userId === "") throw  {status : StatusCodes.BAD_REQUEST,message:"User Id not found"}
+
     const response = await User.getBookings(userId);
     res.status(response.status).send(response.data);
   } catch (err) {
@@ -159,9 +163,12 @@ export async function getBookings(req, res) {
 export async function getSeats(req, res) {
   const theaterMovieTimeId = req.query.theaterMovieTimeId;
   try {
+    if(theaterMovieTimeId === null || theaterMovieTimeId === undefined || theaterMovieTimeId === "") throw  {status : StatusCodes.BAD_REQUEST,message:"User Id not found"}
+
     const response = await User.getSeats(theaterMovieTimeId);
     res.status(response.status).send(response.data);
   } catch (err) {
+    // console.log(err)
     if (err.status) {
       res.status(err.status).send(err.message);
     } else {
@@ -176,6 +183,11 @@ export async function getTheaterTimeMovieId(req, res) {
   const time = req.query.time;
   console.log(theaterMovieId, time);
   try {
+    for(let key in req.query){
+      if(req.query[key] === null || req.query[key] === undefined || req.query[key] === ""){
+        throw {status : StatusCodes.BAD_REQUEST,message:`${key} not found` }
+      }
+    }
     const response = await User.getTheaterTimeMovieId(theaterMovieId, time);
     res.status(response.status).send(response.data);
   } catch (err) {
@@ -192,10 +204,15 @@ export async function getMoviesByGenre(req, res) {
   const genre = req.query.genre;
   console.log(genre);
   try {
+    if(genre === null || genre === undefined || genre === "") throw  {status : StatusCodes.BAD_REQUEST,message:"Genre not found"}
+
     const response = await User.getMoviesByGenre(genre);
     return res.status(200).send(response.data);
   } catch (err) {
-    console.error("Error fetching movies:", err);
-    res.status(500).send("Failed to fetch movies");
+    if (err.status) {
+      res.status(err.status).send(err.message);
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occured");
+    }
   }
 }

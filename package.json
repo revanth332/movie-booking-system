@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "nodemon app.js",
-    "test": "jest --watchAll"
+    "unit-test": "jest --testPathPattern test/unit",
+    "integration-test": "jest test/integration/publisherController.integration"
   },
   "type": "module",
   "dependencies": {

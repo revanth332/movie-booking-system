@@ -4,6 +4,7 @@ import pkg from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import config from "../../../../config.js";
 
+
 const { sign } = pkg;
 
 export async function loginPublisher(req, res) {
@@ -124,7 +125,7 @@ export async function cancelPublishedMovie(req, res) {
   const theaterMovieId = req.query.theaterMovieId;
   const movieId = req.query.movieId;
   const date = req.query.date;
-  console.log("theaterMovieTimeId")
+  console.log("theaterMovieTimeId fg")
   try {
     const response = await Publisher.cancelPublishedMovie(theaterMovieTimeId,date,theaterMovieId,movieId);
     res.status(200).send(response.msg);

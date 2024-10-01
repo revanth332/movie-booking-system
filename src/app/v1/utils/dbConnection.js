@@ -33,4 +33,4 @@ const closeConnection = async () => {
   }
 };
 
-export { poolPromise, closeConnection };
+export { poolPromise,pool, closeConnection };
