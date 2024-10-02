@@ -115,6 +115,13 @@ class Publisher {
   static async addMovie(movieData) {
     var { imdbID, theaterId, price, date, time:times } = movieData;
     try {
+      for(let key in movieData){
+        if(movieData[key] === null || movieData[key] === undefined || movieData[key] === ""){
+          console.log(key)
+          throw {status:StatusCodes.BAD_REQUEST,message:`${key} is empty`}
+          
+        }
+      }
       var ddate = new Date(date);
       const pool = await poolPromise;
       const res = await axios.get(
@@ -197,6 +204,7 @@ class Publisher {
       return { status: StatusCodes.OK, msg: "Successfully added movie" };
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
 
@@ -224,16 +232,13 @@ class Publisher {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data };
       }
-      return {
+      throw {
         status: StatusCodes.NOT_FOUND,
         msg: "No published movies found for this theater",
       };
     } catch (err) {
       console.error("Error fetching published movies:", err);
-      throw {
-        status: StatusCodes.INTERNAL_SERVER_ERROR,
-        msg: "An error occurred",
-      };
+      throw err;
     }
   }
 
@@ -245,11 +250,6 @@ class Publisher {
   ) {
     try {
       const pool = await poolPromise;
-      // // const [rows] = await pool.query(`select theater_movie_id from theater_movie_time where theater_movie_time_id = ?`,[theaterMovieTimeId]);
-      // console.log("cancel "+theaterMovieTimeId)
-      // console.log(rows)
-      // console.log("cancel",theaterMovieTimeId,date)
-      // const theaterMovieId = rows[0]["theater_movie_id"];
       const sql2 = `select u.email,b.booking_id from user u join booking b on u.user_id = b.user_id where theater_movie_time_id = ? and b.status_id=1;`;
       const [rows3] = await pool.query(sql2,[theaterMovieTimeId]);
       console.log(rows3)

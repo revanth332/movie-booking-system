@@ -23,7 +23,8 @@ try {
         USER:process.env.USER,
         SECRET_KEY:process.env.SECRET_KEY
     };
-} catch (error) {
+}
+catch (error) {
     console.log(error);
 }
 

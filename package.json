@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon app.js",
     "unit-test": "jest --testPathPattern test/unit",
-    "integration-test": "jest test/integration/publisherController.integration"
+    "integration-test": "jest test/integration"
   },
   "type": "module",
   "dependencies": {

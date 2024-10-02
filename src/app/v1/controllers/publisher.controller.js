@@ -77,45 +77,20 @@ export async function addMovie(req, res) {
   }
 }
 
-export async function registerMovie(req, res) {
-  const movieData = req.body;
-  try {
-    const response = await Publisher.registerMovie(movieData);
-    res.status(response.status).send("Movie registered succesfully");
-  } catch (err) {
-    if (err.status) {
-      res.status(err.status).send(err.message);
-    } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
-    }
-    // return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to add the movie",err})
-  }
-}
-
-// export async function getPublishedMovies(req, res) {
-//   const theaterId = req.query.theaterId;
-//   try {
-//     const response = await Publisher.getPublishedMovies(theaterId);
-//     console.log(response)
-//     return res.send("response")
-//   } catch (err) {
-//     // if (err.status) {
-//     //   res.status(err.status).send(err.message);
-//     // } else {
-//     //   res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err);
-//     // }
-//     return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({msg:"Failed to get the theaters",err})
-//   }
-// }
 
 export async function getPublishedMovies(req, res) {
   const theaterId = req.query.theaterId;
   try {
+    if(theaterId === null || theaterId === undefined || theaterId === "") throw {status:StatusCodes.BAD_REQUEST,message:"TheaterId not specified"}
     const response = await Publisher.getPublishedMovies(theaterId);
     res.status(200).send(response.data);
   } catch (err) {
     // console.error("Error fetching published movies:", err);
-    res.status(500).send("Failed to fetch movies"); 
+    if (err.status) {
+      return res.status(err.status).send(err.message);
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occured");
+    }
   } 
 }
 
@@ -126,12 +101,24 @@ export async function cancelPublishedMovie(req, res) {
   const movieId = req.query.movieId;
   const date = req.query.date;
   console.log("theaterMovieTimeId fg")
+  const movieData = req.query;
   try {
+    for(let key in movieData){
+      if(movieData[key] === null || movieData[key] === undefined || movieData[key] === ""){
+        console.log(key)
+        throw {status:StatusCodes.BAD_REQUEST,message:`${key} is empty`}
+        
+      }
+    }
     const response = await Publisher.cancelPublishedMovie(theaterMovieTimeId,date,theaterMovieId,movieId);
     res.status(200).send(response.msg);
   } catch (err) {
     // console.error("Error fetching published movies:", err);
-    res.status(500).send("Failed to fetch movies");
+    if (err.status) {
+      return res.status(err.status).send(err.message);
+    } else {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send("An error occured");
+    }
   }
 }
 
