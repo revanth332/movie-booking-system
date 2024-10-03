@@ -6,8 +6,10 @@ import { v4 as uuidv4 } from "uuid";
 
 class User {
   static async findUser(userId) {
+    console.log(userId)
     try {
       const pool = await poolPromise;
+      console.log(userId);
       const sql = `select user_id from user where user_id = ?`;
       const [rows] = await pool.query(sql, [userId]);
       if (rows.length > 0) {
@@ -20,7 +22,14 @@ class User {
   static async registerUser(userData) {
     const { firstName, lastName, phone, email, password } = userData;
     try {
-      if(firstName === "" || lastName === "" || phone === "" || email === "" || password === "") throw err;
+      if (
+        firstName === "" ||
+        lastName === "" ||
+        phone === "" ||
+        email === "" ||
+        password === ""
+      )
+        throw err;
       const pool = await poolPromise;
       const userId = uuidv4();
       const sql = `insert into user values(?,?,?,?,?,?)`;
@@ -101,11 +110,11 @@ class User {
 
   static async bookMovie(bookingData) {
     const { userId, seats, theaterTimeMovieId } = bookingData;
-    
+
     console.log("hello");
     console.log(bookingData);
     try {
-      if(userId === "" || seats.length  === 0 || theaterTimeMovieId === "") {
+      if (userId === "" || seats.length === 0 || theaterTimeMovieId === "") {
         throw { status: StatusCodes.BAD_REQUEST, msg: "Invalid booking data" };
       }
 
@@ -138,7 +147,7 @@ class User {
   static async cancelBooking(bookingData) {
     const { bookingId } = bookingData;
     try {
-      if(bookingId === undefined || bookingId === null || bookingId === ""){
+      if (bookingId === undefined || bookingId === null || bookingId === "") {
         throw { status: StatusCodes.BAD_REQUEST, msg: "Invalid booking id" };
       }
       const pool = await poolPromise;
@@ -208,13 +217,11 @@ class User {
         return { status: StatusCodes.OK, data: rows };
       }
       throw { status: StatusCodes.NOT_FOUND, msg: "User Not Found" };
-
     } catch (err) {
       console.log(err);
       throw err;
     }
   }
-
 
   static async getTrendingMovies() {
     try {
@@ -240,7 +247,10 @@ class User {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      throw { status: StatusCodes.NOT_FOUND, msg: "Invalid theaterMovieId or time" };
+      throw {
+        status: StatusCodes.NOT_FOUND,
+        msg: "Invalid theaterMovieId or time",
+      };
     } catch (err) {
       throw err;
     }
@@ -254,8 +264,10 @@ class User {
       if (rows.length > 0) {
         return { status: StatusCodes.OK, data: rows };
       }
-      throw { status: StatusCodes.NOT_FOUND, msg: "Invalid  theater_movie_time_id" };
-
+      throw {
+        status: StatusCodes.NOT_FOUND,
+        msg: "Invalid  theater_movie_time_id",
+      };
     } catch (err) {
       console.log(err);
       throw err;
