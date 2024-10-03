@@ -41,7 +41,7 @@ describe("authController tests",() => {
           jest.spyOn(bcrypt,"hash").mockResolvedValueOnce("hashedpassword");
     
           mockTheater = {...mockTheater,password:"hashedpassword"};
-    
+     
           await registerTheater(mockReq,mockRes);
     
           expect(Publisher.registerTheater).toHaveBeenCalledWith(mockTheater);

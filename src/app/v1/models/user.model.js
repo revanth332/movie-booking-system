@@ -32,6 +32,7 @@ class User {
         throw err;
       const pool = await poolPromise;
       const userId = uuidv4();
+      console.log(userId)
       const sql = `insert into user values(?,?,?,?,?,?)`;
       await pool.query(sql, [
         userId,

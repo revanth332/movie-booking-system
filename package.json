@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon app.js",
-    "unit-test": "jest --testPathPattern test/unit/authModel.unit.spec",
+    "unit-test": "jest test/unit/authModel.unit.spec",
     "integration-test": "jest test/integration"
   },
   "type": "module",
