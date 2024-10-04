@@ -1,12 +1,11 @@
 import { StatusCodes } from "http-status-codes";
-// import config from "../../../../config.js";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
 
 class User {
   static async findUser(userId) {
-    console.log(userId)
+    console.log(userId);
     try {
       const pool = await poolPromise;
       console.log(userId);
@@ -29,10 +28,10 @@ class User {
         email === "" ||
         password === ""
       )
-        throw err;
+        throw { status: StatusCodes.BAD_REQUEST, message: "incomplete fields" };
       const pool = await poolPromise;
       const userId = uuidv4();
-      console.log(userId)
+      console.log(userId);
       const sql = `insert into user values(?,?,?,?,?,?)`;
       await pool.query(sql, [
         userId,
