@@ -66,6 +66,7 @@ export async function loginUser(req, res) {
 }
 
 
+
 export async function getMovies(req, res) {
   try {
     const response = await User.getMovies();

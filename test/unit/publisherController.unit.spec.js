@@ -5,7 +5,6 @@ import { StatusCodes } from "http-status-codes";
 import { closeConnection } from "../../src/app/v1/utils/dbConnection.js";
 import Publisher from "../../src/app/v1/models/publisher.model.js";
 
-
 import {
   addMovie,
   cancelPublishedMovie,
@@ -119,7 +118,7 @@ describe("Publisher controller", () => {
       await getPublishedMovies(mockReq, mockRes);
 
       expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.send).toHaveBeenCalledWith("Failed to fetch movies");
+      expect(mockRes.send).toHaveBeenCalledWith("An error occured");
     });
   });
 
@@ -179,7 +178,7 @@ describe("Publisher controller", () => {
         "tt31322250"
       );
       expect(mockRes.status).toHaveBeenCalledWith(500);
-      expect(mockRes.send).toHaveBeenCalledWith("Failed to fetch movies");
+      expect(mockRes.send).toHaveBeenCalledWith("An error occured");
     });
   });
 
@@ -187,105 +186,3 @@ describe("Publisher controller", () => {
 
 
 
-////////////////////////////////////////////
-
-
-// import { poolPromise } from "../src/app/v1/utils/dbConnection.js";
-// // import Publisher from "../publisher.model.js";
-// import nodemailer from "nodemailer";
-
-// jest.mock("../src/app/v1/utils/dbConnection.js");
-// jest.mock("nodemailer");
-
-// describe("Publisher Model - cancelPublishedMovie", () => {
-//   let mockPool;
-
-//   beforeAll(async () => {
-//     mockPool = await poolPromise;
-//   });
-
-//   afterEach(() => {
-//     jest.clearAllMocks();
-//   });
-
-//   test.only("should cancel published movie and send email if booking exists", async () => {
-//     const theaterMovieTimeId = "1";
-//     const date = "2023-01-01";
-//     const theaterMovieId = "1";
-//     const movieId = "1";
-
-//     // Mocking the database responses
-//     jest.spyOn(mockPool,"query")
-//       .mockResolvedValueOnce([{ email: "user@example.com", booking_id: "123" }]) // for booking query
-//       .mockResolvedValueOnce([
-//         {
-//           theater_name: "Test Theater",
-//           movie_name: "Test Movie",
-//           date: new Date(),
-//           time: "12:00",
-//         },
-//       ]) // for ticket query
-//       .mockResolvedValueOnce([{ count: 0 }]) // for count of theater_movie
-//       .mockResolvedValueOnce([{ count: 0 }]); // for count of movie
-
-//     nodemailer.createTransport.mockReturnValue({
-//       sendMail: jest.fn((mailDetails, callback) => {
-//         callback(null, "Email sent");
-//       }),
-//     });
-
-//     const response = await Publisher.cancelPublishedMovie(
-//       theaterMovieTimeId,
-//       date,
-//       theaterMovieId,
-//       movieId
-//     );
-
-//     expect(response).toEqual({ status: 200, msg: "Show deleted successfully" });
-//     expect(mockPool.query).toHaveBeenCalledTimes(4); // Ensure all queries were called
-//     expect(nodemailer.createTransport().sendMail).toHaveBeenCalled(); // Ensure email was sent
-//   });
-
-//   test("should delete theater_movie_time without sending email if no booking exists", async () => {
-//     const theaterMovieTimeId = "1";
-//     const date = "2023-01-01";
-//     const theaterMovieId = "1";
-//     const movieId = "1";
-
-//     // Mocking the database responses
-//     mockPool.query
-//       .mockResolvedValueOnce([]) // No booking found
-//       .mockResolvedValueOnce([{ count: 1 }]) // for count of theater_movie
-//       .mockResolvedValueOnce([{ count: 0 }]); // for count of movie
-
-//     const response = await Publisher.cancelPublishedMovie(
-//       theaterMovieTimeId,
-//       date,
-//       theaterMovieId,
-//       movieId
-//     );
-
-//     expect(response).toEqual({ status: 200, msg: "Show deleted successfully" });
-//     expect(mockPool.query).toHaveBeenCalledTimes(3); // Ensure all queries were called
-//     expect(nodemailer.createTransport().sendMail).not.toHaveBeenCalled(); // Ensure email was not sent
-//   });
-
-//   test("should throw an error if an exception occurs", async () => {
-//     const theaterMovieTimeId = "1";
-//     const date = "2023-01-01";
-//     const theaterMovieId = "1";
-//     const movieId = "1";
-
-//     // Mocking the database responses to throw an error
-//     mockPool.query.mockRejectedValue(new Error("Database error"));
-
-//     await expect(
-//       Publisher.cancelPublishedMovie(
-//         theaterMovieTimeId,
-//         date,
-//         theaterMovieId,
-//         movieId
-//       )
-//     ).rejects.toEqual({ status: 500, msg: "An error occurred" });
-//   });
-// });

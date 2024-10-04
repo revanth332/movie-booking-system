@@ -18,6 +18,7 @@ class User {
       throw err;
     }
   }
+  
   static async registerUser(userData) {
     const { firstName, lastName, phone, email, password } = userData;
     try {
@@ -57,11 +58,17 @@ class User {
     const { phone, password } = userData;
     console.log(phone);
     try {
+      for(let key of Object.keys(userData)){
+        if(userData[key] === "" || userData[key] === null || userData[key] === undefined) throw {status:StatusCodes.BAD_REQUEST,message:"empty field error"}
+      }
+
       const pool = await poolPromise;
       const sql = `select user_id,password,first_name from user where phone = ?`;
       const [rows] = await pool.query(sql, [phone]);
+      console.log(rows)
       if (rows.length > 0) {
         const matched = await bcrypt.compare(password, rows[0].password);
+        console.log(matched)
         if (matched)
           return {
             status: StatusCodes.OK,
@@ -73,8 +80,10 @@ class User {
         else {
           const sql = `select theater_id,password,theater_name from theater where phone = ?`;
           const [rows] = await pool.query(sql, [phone]);
+          console.log(rows)
           if (rows.length > 0) {
             const matched = await bcrypt.compare(password, rows[0].password);
+            console.log(matched)
             if (matched)
               return {
                 status: StatusCodes.OK,
@@ -85,6 +94,24 @@ class User {
               };
             else throw new Error("Invalid credentials");
           }
+        }
+      }
+      else{
+        const sql = `select theater_id,password,theater_name from theater where phone = ?`;
+        const [rows] = await pool.query(sql, [phone]);
+        console.log(rows)
+        if (rows.length > 0) {
+          const matched = await bcrypt.compare(password, rows[0].password);
+          console.log(matched)
+          if (matched)
+            return {
+              status: StatusCodes.OK,
+              msg: "Login Successful",
+              userId: rows[0]["theater_id"],
+              userName: rows[0]["theater_name"],
+              role: "publisher",
+            };
+          else throw new Error("Invalid credentials");
         }
       }
       throw { status: StatusCodes.NOT_FOUND, msg: "Invalid credentials" };

@@ -18,6 +18,7 @@ afterAll(async () => {
 });
 
 describe("user conroller", () => {
+  
   describe("fetch Movies", () => {
     let mockReq, mockRes;
 
@@ -50,7 +51,7 @@ describe("user conroller", () => {
       director: "S.W. Hannan",
     };
 
-    it.only("should fetch movies", async () => {
+    it("should fetch movies", async () => {
       jest
         .spyOn(User, "getMovies")
         .mockResolvedValueOnce({ status: 200, data: [mockMovie] });
@@ -295,6 +296,7 @@ describe("user conroller", () => {
       jest
         .spyOn(User, "getTheaterTimeMovieId")
         .mockRejectedValueOnce(new Error("An error occured"));
+
       await getTheaterTimeMovieId(mockReq, mockRes);
 
       expect(User.getTheaterTimeMovieId).toHaveBeenCalledWith(
@@ -377,5 +379,18 @@ describe("user conroller", () => {
       expect(mockRes.status).toHaveBeenCalledWith(200);
       expect(mockRes.send).toHaveBeenCalledWith([mockMovie]);
     });
+
+    it("should fail on fetching movies based on genre successfully", async () => {
+      jest
+        .spyOn(User, "getMoviesByGenre")
+        .mockRejectedValueOnce(new Error("An error occurred"));
+
+      await getMoviesByGenre(mockReq, mockRes);
+
+      expect(User.getMoviesByGenre).toHaveBeenCalledWith("drama");
+      expect(mockRes.status).toHaveBeenCalledWith(500);
+      expect(mockRes.send).toHaveBeenCalledWith("An error occured");
+    });
+
   });
 });

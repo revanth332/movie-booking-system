@@ -10,6 +10,6 @@ router.route('/registerTheater').post(registerTheater);
 
 router.route('/loginUser').post(loginUser);
 
-router.route('/loginPublisher').post(loginPublisher);
+// router.route('/loginPublisher').post(loginPublisher);
 
 export default router;

@@ -24,7 +24,7 @@ class Publisher {
 
       for(let key in theaterData){
         if(theaterData[key] === null || theaterData[key] === undefined || theaterData[key] === ""){
-          throw new Error();
+          throw {status: StatusCodes.BAD_REQUEST, msg: "empty field error"}
         }
       }
 
@@ -112,6 +112,7 @@ class Publisher {
     return (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122);
   }
 
+  
   static async addMovie(movieData) {
     var { imdbID, theaterId, price, date, time:times } = movieData;
     try {
@@ -260,7 +261,7 @@ class Publisher {
       where b.booking_id = ?`;
       const [tickets] = await pool.query(sql1,[bookingId]);
       const ticket = tickets[0]
-      console.log(ticket)
+      console.log(ticket);
       }
       await pool.query(
         `delete from theater_movie_time where theater_movie_time_id = ?`,
