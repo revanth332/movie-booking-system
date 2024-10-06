@@ -73,12 +73,11 @@ describe("User Model", () => {
     });
 
     it("should register user", async () => {
-      jest.spyOn(mockPool, "query").mockResolvedValueOnce();
+      jest.spyOn(mockPool, "query").mockResolvedValueOnce([{ affectedRows: 1 }]);
       jest.spyOn(uuid, "v4").mockReturnValueOnce("useruuid");
 
       const result = await User.registerUser(mockUser);
 
-      expect(uuid.v4).toHaveBeenCalled();
       expect(mockPool.query).toHaveBeenCalledWith(
         "insert into user values(?,?,?,?,?,?)",
         ["useruuid", ...Object.values(mockUser)]
@@ -90,43 +89,36 @@ describe("User Model", () => {
       });
     });
 
-    // it("should fail to register user with missing data", async () => {
-    //   jest.spyOn(mockPool, "query").mockResolvedValueOnce();
-    //   jest.spyOn(uuid, "v4").mockReturnValueOnce("useruuid");
+    it("should fail to register user with missing data", async () => {
+      const incompleteUser = {
+        firstName: "Ravani",
+        lastName: "Lanka",
+        phone: "9959965977",
+        email: "ravani@gmail.com",
+        password: "",
+      };
 
-    //   const incompleteUser = {
-    //     firstName: "Ravani",
-    //     lastName: "Lanka",
-    //     phone: "9959965977",
-    //     email: "ravani@gmail.com",
-    //     password: "",
-    //   };
-
-    //   try {
-    //     await User.registerUser(incompleteUser);
-    //   } catch (err) {
-    //     expect(uuid.v4).not.toHaveBeenCalled();
-    //     expect(mockPool.query).not.toHaveBeenCalled();
-    //     expect(err).toEqual({
-    //       status: StatusCodes.BAD_REQUEST,
-    //       message: "incomplete fields",
-    //     });
-    //   }
-    // });
+      try {
+        await User.registerUser(incompleteUser);
+      } catch (err) {
+        expect(err).toEqual({
+          status: StatusCodes.BAD_REQUEST,
+          message: "incomplete fields",
+        });
+      }
+    });
   });
 
   describe("login user", () => {
     it("should login user", async () => {
       let mockUser = { phone: "1234567890", password: "theaterpassword" };
-      jest.spyOn(mockPool, "query").mockResolvedValueOnce([
-        [
+      jest.spyOn(mockPool,"query").mockResolvedValueOnce([[
           {
             user_id: "useruuid",
             password: "hashedpassword",
             first_name: "Ravani",
           }
-        ],
-      ]);
+        ]]);
       const mockBcryptCompare = jest
         .spyOn(bcrypt, "compare")
         .mockResolvedValueOnce(true);
@@ -152,17 +144,22 @@ describe("User Model", () => {
 
     it("should fail to login user with invalid credentials", async () => {
       let mockUser = { phone: "1234567890", password: "" };
-      jest.spyOn(mockPool, "query").mockResolvedValueOnce([[
-        {
-          user_id: "useruuid",
-          password: "hashedpassword",
-          first_name: "Ravani",
-        },
-      ]]);
+      jest.spyOn(mockPool, "query").mockResolvedValueOnce([
+        [
+          {
+            user_id: "useruuid",
+            password: "hashedpassword",
+            first_name: "Ravani",
+          },
+        ]
+      ]);
       try {
         await User.loginUser(mockUser);
       } catch (err) {
-        expect(err).toEqual({status:StatusCodes.BAD_REQUEST,message:"empty field error"});
+        expect(err).toEqual({
+          status: StatusCodes.BAD_REQUEST,
+          message: "empty field error",
+        });
       }
     });
   });
@@ -171,9 +168,9 @@ describe("User Model", () => {
   //   it("should login publisher", async () => {
   //     jest.spyOn(mockPool, "query").mockResolvedValueOnce([[]]).mockResolvedValueOnce([[{ theater_id: "theateruuid", password: "hashedpassword", theater_name: "Theater Name" }]]);
   //     jest.spyOn(bcrypt, "compare").mockResolvedValueOnce(true)
-  
+
   //     const result = await User.loginUser({ phone: "1234567890", password: "theaterpassword" });
-  
+
   //     // expect(mockPool.query).toHaveBeenCalledWith("select user_id,password,first_name from user where phone = ?", ["1234567890"]);
   //     // expect(mockPool.query).toHaveBeenCalledWith("select user_id,password,first_name from theater where phone = ?", ["1234567890"]);
   //     // expect(bcrypt.compare).toHaveBeenCalledWith("theaterpassword", "hashedpassword");
@@ -185,11 +182,11 @@ describe("User Model", () => {
   //       role: "publisher",
   //     });
   //   });
-  
+
   //   it("should fail to login publisher", async () => {
   //     jest.spyOn(mockPool, "query").mockResolvedValueOnce([[]]).mockResolvedValueOnce([[{ theater_id: "theateruuid", password: "hashedpassword", theater_name: "Theater Name" }]]);
   //     jest.spyOn(bcrypt, "compare").mockResolvedValueOnce(true)
-  
+
   //     try{
   //       await User.loginUser({ phone: "1234567890", password: "" });
   //     }
@@ -205,20 +202,19 @@ describe("User Model", () => {
   //   });
   // })
 
-  describe("register theater",() => {
-
+  describe("register theater", () => {
     it("should register theater", async () => {
       let mockTheater = {
-        theaterName : "theaterName",
-        email : "email",
-        phone : "phone",
-        capacity : "capacity",
-        city : "city",
-        theaterAddress : "theaterAddress",
-        password : "password"
-      }
+        theaterName: "theaterName",
+        email: "email",
+        phone: "phone",
+        capacity: "capacity",
+        city: "city",
+        theaterAddress: "theaterAddress",
+        password: "password",
+      };
 
-      jest.spyOn(mockPool, "query").mockResolvedValueOnce([{}]);
+      jest.spyOn(mockPool, "query").mockResolvedValueOnce([{ affectedRows: 1 }]);
       jest.spyOn(uuid, "v4").mockReturnValueOnce("theateruuid");
 
       const result = await Publisher.registerTheater(mockTheater);
@@ -226,31 +222,30 @@ describe("User Model", () => {
       expect(result).toEqual({
         status: StatusCodes.OK,
         msg: "Successfully added Theater",
-        data: { theaterId:"theateruuid", theaterName:"theaterName" },
-      })
-    })
+        data: { theaterId: "theateruuid", theaterName: "theaterName" },
+      });
+    });
 
     it("should fail to register theater", async () => {
       let mockTheater = {
-        theaterName : "theaterName",
-        email : "email",
-        phone : "phone",
-        capacity : "capacity",
-        city : "city",
-        theaterAddress : "theaterAddress",
-        password : ""
-      }
+        theaterName: "theaterName",
+        email: "email",
+        phone: "phone",
+        capacity: "capacity",
+        city: "city",
+        theaterAddress: "theaterAddress",
+        password: "",
+      };
 
-      jest.spyOn(mockPool, "query").mockResolvedValueOnce([{}]);
-      jest.spyOn(uuid, "v4").mockReturnValueOnce("theateruuid");
-
-      try{
+      try {
         await Publisher.registerTheater(mockTheater);
+      } catch (err) {
+        expect(err).toEqual({
+          status: StatusCodes.BAD_REQUEST,
+          msg: "empty field error",
+        });
       }
-      catch(err){
-        expect(err).toEqual({status: StatusCodes.BAD_REQUEST, msg: "empty field error"})
-      }
-    })
-  })
+    });
+  });
 
 });

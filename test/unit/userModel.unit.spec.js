@@ -50,7 +50,7 @@ describe("fetching movies",() => {
   describe("booking Movie",() => {
     it("should book movie", async () => {
       let mockData = { userId:"useruuid",seats:["seat1uuid","seat2uuid"], theaterTimeMovieId : "theaterTimeMovieId" }
-      jest.spyOn(mockPool, "query").mockResolvedValueOnce().mockResolvedValueOnce().mockResolvedValueOnce();
+      jest.spyOn(mockPool, "query").mockResolvedValueOnce([{affectedRows : 1}]).mockResolvedValueOnce([{affectedRows : 1}]).mockResolvedValueOnce([{affectedRows : 1}]);
 
       const result = await User.bookMovie(mockData);
 
@@ -63,7 +63,7 @@ describe("fetching movies",() => {
       let mockData = { bookingId : "bookingid123" }
       jest.spyOn(mockPool, "query").mockResolvedValueOnce([{affectedRows:1}])
                                    .mockResolvedValueOnce([[{"seat_id":"seat1","seat_id":"seat2"}]])
-                                   .mockResolvedValueOnce();
+                                   .mockResolvedValueOnce([{affectedRows : 1}]);
 
       const result = await User.cancelBooking(mockData);
 

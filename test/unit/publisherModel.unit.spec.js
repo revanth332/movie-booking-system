@@ -6,6 +6,7 @@ import {
 } from "../../src/app/v1/utils/dbConnection.js";
 import axios from 'axios';
 import * as uuid from "uuid";
+import nodemailer from "nodemailer";
 
 jest.mock("uuid", () => ({
   v4: jest.fn(),
@@ -46,7 +47,7 @@ describe("adding Movie in theater",() => {
 
         jest.spyOn(axios,"get").mockResolvedValueOnce({data : mockFetchedMovie});
         jest.spyOn(uuid,"v4").mockReturnValueOnce("theatermovieid");
-        jest.spyOn(mockPool,"query").mockResolvedValueOnce([[]]).mockResolvedValueOnce([{affectedRows : 1}]).mockResolvedValueOnce([[]]).mockResolvedValueOnce().mockResolvedValueOnce();
+        jest.spyOn(mockPool,"query").mockResolvedValueOnce([[]]).mockResolvedValueOnce([{affectedRows : 1}]).mockResolvedValueOnce([[]]).mockResolvedValueOnce([{affectedRows : 1}]).mockResolvedValueOnce([{affectedRows : 1}]);
 
         const result = await Publisher.addMovie(mockMovie);
 
@@ -76,6 +77,7 @@ describe("adding Movie in theater",() => {
 //     })
 // })
 
+
 describe("cancel movie",() => {
     it("should cancel movie",async () => {
         let mockMovieData = {
@@ -85,9 +87,26 @@ describe("cancel movie",() => {
             movieId : "movieid"
         }
 
+        let mockMailDetails = {
+          from: "mockmailuser",
+          to: "email",
+          subject: "Movie Cancelled",
+          html : "<h1>mockhtml</h1>",
+        };
+
+        const mailTransporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: "mockmailuser",
+            pass: "mockpassword",
+          },
+        });
+
+        jest.spyOn(mailTransporter,"sendMail").mockImplementationOnce(cb => cb(null, true))
+
         jest.spyOn(mockPool,"query").mockResolvedValueOnce([[{email:"email",booking_id:"bookingid"}]])
                                     .mockResolvedValueOnce([[{theater_name:"theatername",movie_name:"moviename",date:"2024-09-09",time:"10:00"}]])
-                                    .mockResolvedValueOnce()
+                                    .mockResolvedValueOnce([{affectedRows : 1}])
                                     .mockResolvedValueOnce([[{count:1}]])
         const result = await Publisher.cancelPublishedMovie(mockMovieData);
 

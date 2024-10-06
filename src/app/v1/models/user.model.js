@@ -1,7 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
+import * as uuid from "uuid";
 
 class User {
   static async findUser(userId) {
@@ -18,7 +18,7 @@ class User {
       throw err;
     }
   }
-  
+
   static async registerUser(userData) {
     const { firstName, lastName, phone, email, password } = userData;
     try {
@@ -31,7 +31,7 @@ class User {
       )
         throw { status: StatusCodes.BAD_REQUEST, message: "incomplete fields" };
       const pool = await poolPromise;
-      const userId = uuidv4();
+      const userId = uuid.v4();
       console.log(userId);
       const sql = `insert into user values(?,?,?,?,?,?)`;
       await pool.query(sql, [
@@ -58,17 +58,25 @@ class User {
     const { phone, password } = userData;
     console.log(phone);
     try {
-      for(let key of Object.keys(userData)){
-        if(userData[key] === "" || userData[key] === null || userData[key] === undefined) throw {status:StatusCodes.BAD_REQUEST,message:"empty field error"}
+      for (let key of Object.keys(userData)) {
+        if (
+          userData[key] === "" ||
+          userData[key] === null ||
+          userData[key] === undefined
+        )
+          throw {
+            status: StatusCodes.BAD_REQUEST,
+            message: "empty field error",
+          };
       }
 
       const pool = await poolPromise;
       const sql = `select user_id,password,first_name from user where phone = ?`;
       const [rows] = await pool.query(sql, [phone]);
-      console.log(rows)
+      console.log(rows);
       if (rows.length > 0) {
         const matched = await bcrypt.compare(password, rows[0].password);
-        console.log(matched)
+        console.log(matched);
         if (matched)
           return {
             status: StatusCodes.OK,
@@ -80,10 +88,10 @@ class User {
         else {
           const sql = `select theater_id,password,theater_name from theater where phone = ?`;
           const [rows] = await pool.query(sql, [phone]);
-          console.log(rows)
+          console.log(rows);
           if (rows.length > 0) {
             const matched = await bcrypt.compare(password, rows[0].password);
-            console.log(matched)
+            console.log(matched);
             if (matched)
               return {
                 status: StatusCodes.OK,
@@ -95,14 +103,13 @@ class User {
             else throw new Error("Invalid credentials");
           }
         }
-      }
-      else{
+      } else {
         const sql = `select theater_id,password,theater_name from theater where phone = ?`;
         const [rows] = await pool.query(sql, [phone]);
-        console.log(rows)
+        console.log(rows);
         if (rows.length > 0) {
           const matched = await bcrypt.compare(password, rows[0].password);
-          console.log(matched)
+          console.log(matched);
           if (matched)
             return {
               status: StatusCodes.OK,
@@ -146,7 +153,7 @@ class User {
       }
 
       const pool = await poolPromise;
-      const bookingId = uuidv4();
+      const bookingId = uuid.v4();
       await pool.query(`insert into booking values (?,?,?,?,?)`, [
         bookingId,
         new Date(),
@@ -156,7 +163,7 @@ class User {
       ]);
       const paramList = [];
       seats.forEach((seatId) => {
-        paramList.push([uuidv4(), bookingId, seatId]);
+        paramList.push([uuid.v4(), bookingId, seatId]);
       });
       await pool.query("insert into booking_details values ?", [paramList]);
       const response = await pool.query(

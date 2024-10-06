@@ -1,14 +1,13 @@
 import { StatusCodes } from "http-status-codes";
 import { poolPromise } from "../utils/dbConnection.js";
 import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
+import * as uuid from "uuid";
 import axios from "axios";
-import nodemailer from 'nodemailer'
+import nodemailer from "nodemailer";
 
 class Publisher {
-
   static async registerTheater(theaterData) {
-    console.log(theaterData)
+    console.log(theaterData);
     const {
       theaterName,
       email,
@@ -19,19 +18,22 @@ class Publisher {
       password,
     } = theaterData;
 
-
     try {
-
-      for(let key in theaterData){
-        if(theaterData[key] === null || theaterData[key] === undefined || theaterData[key] === ""){
-          throw {status: StatusCodes.BAD_REQUEST, msg: "empty field error"}
+      for (let key in theaterData) {
+        if (
+          theaterData[key] === null ||
+          theaterData[key] === undefined ||
+          theaterData[key] === ""
+        ) {
+          throw { status: StatusCodes.BAD_REQUEST, msg: "empty field error" };
         }
       }
 
       const pool = await poolPromise;
-      const theaterId = uuidv4();
+      const theaterId = uuid.v4();
+      console.log(theaterId+" register")
       const sql = `insert into theater values(?,?,?,?,?,?,?,?)`;
-      const [{ affectedRows }] = await pool.query(sql, [
+      await pool.query(sql, [
         theaterId,
         theaterName,
         email,
@@ -44,7 +46,7 @@ class Publisher {
       return {
         status: StatusCodes.OK,
         msg: "Successfully added Theater",
-        data: { theaterId, theaterName },
+        data: { theaterId:theaterId, theaterName },
       };
     } catch (err) {
       console.log(err);
@@ -109,18 +111,22 @@ class Publisher {
 
   static isAlphabetic(char) {
     const charCode = char.charCodeAt(0);
-    return (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122);
+    return (
+      (charCode >= 65 && charCode <= 90) || (charCode >= 97 && charCode <= 122)
+    );
   }
 
-  
   static async addMovie(movieData) {
-    var { imdbID, theaterId, price, date, time:times } = movieData;
+    var { imdbID, theaterId, price, date, time: times } = movieData;
     try {
-      for(let key in movieData){
-        if(movieData[key] === null || movieData[key] === undefined || movieData[key] === ""){
-          console.log(key)
-          throw {status:StatusCodes.BAD_REQUEST,message:`${key} is empty`}
-          
+      for (let key in movieData) {
+        if (
+          movieData[key] === null ||
+          movieData[key] === undefined ||
+          movieData[key] === ""
+        ) {
+          console.log(key);
+          throw { status: StatusCodes.BAD_REQUEST, message: `${key} is empty` };
         }
       }
       var ddate = new Date(date);
@@ -152,7 +158,7 @@ class Publisher {
       Released = this.formatDate(Released);
 
       const movieId = imdbID;
-      var theaterMovieId = uuidv4();
+      var theaterMovieId = uuid.v4();
       const [rows] = await pool.query(
         `select movie_id from movie where movie_id = ?`,
         [movieId]
@@ -196,8 +202,8 @@ class Publisher {
       }
 
       const paramList = [];
-      times.forEach(function (time) {
-        paramList.push([uuidv4(), theaterMovieId, time]);
+      times.forEach(function (time) {                       
+        paramList.push([uuid.v4(), theaterMovieId, time                     ]);
       });
 
       const sql5 = `insert into theater_movie_time values ?`;
@@ -212,10 +218,10 @@ class Publisher {
   static convertTo12HourFormat(time24) {
     let [hours, minutes] = time24.split(":");
     let num_hours = parseInt(hours);
-  
+
     let period = num_hours >= 12 ? "PM" : "AM";
-    num_hours = num_hours % 12 || 12; 
-  
+    num_hours = num_hours % 12 || 12;
+
     return `${num_hours}:${minutes} ${period}`;
   }
 
@@ -252,16 +258,17 @@ class Publisher {
     try {
       const pool = await poolPromise;
       const sql2 = `select u.email,b.booking_id from user u join booking b on u.user_id = b.user_id where theater_movie_time_id = ? and b.status_id=1;`;
-      const [rows3] = await pool.query(sql2,[theaterMovieTimeId]);
-      console.log(rows3)
-      if(rows3.length > 0){
-      const bookingId = rows3[0].booking_id;
-      const sql1 = `select t.theater_name,m.movie_name,tm.date,tmt.time from booking b join theater_movie_time tmt join theater_movie tm join theater t join movie m
+      const [rows3] = await pool.query(sql2, [theaterMovieTimeId]);
+      var ticket;
+      console.log(rows3);
+      if (rows3.length > 0) {
+        const bookingId = rows3[0].booking_id;
+        const sql1 = `select t.theater_name,m.movie_name,tm.date,tmt.time from booking b join theater_movie_time tmt join theater_movie tm join theater t join movie m
       on b.theater_movie_time_id = tmt.theater_movie_time_id and tmt.theater_movie_id = tm.theater_movie_id and tm.theater_id = t.theater_id and tm.movie_id = m.movie_id
       where b.booking_id = ?`;
-      const [tickets] = await pool.query(sql1,[bookingId]);
-      const ticket = tickets[0]
-      console.log(ticket);
+        const [tickets] = await pool.query(sql1, [bookingId]);
+        ticket = tickets[0];
+        console.log(ticket);
       }
       await pool.query(
         `delete from theater_movie_time where theater_movie_time_id = ?`,
@@ -287,15 +294,15 @@ class Publisher {
         }
       }
       const mailTransporter = nodemailer.createTransport({
-        service: 'gmail',
+        service: "gmail",
         auth: {
-            user: process.env.APP_MAIL_USER,
-            pass:process.env.APP_MAIL_PASS
-        }
-    });
+          user: process.env.APP_MAIL_USER,
+          pass: process.env.APP_MAIL_PASS,
+        },
+      });
 
-
-      if(rows3.length > 0){
+      if (rows3.length > 0) {
+        console.log("email");
 
         const html = `<!DOCTYPE html>
         <html>
@@ -314,36 +321,45 @@ class Publisher {
                 <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">Time</th>
               </tr>
               <tr>
-                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.movie_name}</td>
-                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.theater_name}</td>
-                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.date.toString().substring(0,10)}</td>
-                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${this.convertTo12HourFormat(ticket.time.substring(0,5))}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${
+                  ticket.movie_name
+                }</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${
+                  ticket.theater_name
+                }</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${ticket.date
+                  .toString()
+                  .substring(0, 10)}</td>
+                <td style="text-align: left; padding: 8px; border: 1px solid #ddd;">${this.convertTo12HourFormat(
+                  ticket.time.substring(0, 5)
+                )}</td>
               </tr>
             </table>
             <p>We apologize for any inconvenience this may cause. Please contact our customer support for assistance.</p>
           </div>
         </body>
-        </html>`
+        </html>`;
 
         const email = rows3[0].email;
+        console.log(email);
         const mailDetails = {
-        from: process.env.APP_MAIL_USER,
-        to: email,
-        subject: "Movie Cancelled",
-        html
-      };
+          from: process.env.APP_MAIL_USER,
+          to: email,
+          subject: "Movie Cancelled",
+          html,
+        };
 
-      mailTransporter.sendMail(mailDetails, function(err, data) {
-        if(err) {
-            console.log('Error Occurs');
-        } else {
-            console.log('Email sent successfully');
-        }
-    });
-  }
+        mailTransporter.sendMail(mailDetails, function (err, data) {
+          if (err) {
+            // console.log("Error Occurs");
+          } else {
+            console.log("Email sent successfully");
+          }
+        });
+      }
       return { status: StatusCodes.OK, msg: "Show deleted successfully" };
     } catch (err) {
-      // console.error("Error deleting published movies:", err);
+      console.error("Error deleting published movies:", err);
       throw {
         status: StatusCodes.INTERNAL_SERVER_ERROR,
         msg: "An error occurred",

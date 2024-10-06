@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "nodemon app.js",
-    "unit-test": "jest test/unit/publisherModel.unit.spec.js",
+    "unit-test": "jest test/unit --detectOpenHandles",
     "integration-test": "jest test/integration"
   },
   "type": "module",
